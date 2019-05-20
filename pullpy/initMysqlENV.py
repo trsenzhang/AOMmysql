@@ -15,6 +15,7 @@ MYSQL_DATA_DIR = '/data/mysql/'
 MYSQL_BASE_DIR = '/usr/local/mysql/'
 MYSQL_CNF_DIR = '/etc/'
 MYSQL_BACK_DIR = '/data/backup/mysql/'
+port=3306
 
 def initMysqlEnvVar():
     try:
@@ -26,7 +27,7 @@ def initMysqlEnvVar():
         return(str(e))
         
 
-def mkDATADir(port):
+def mkDATADir():
     """
         统一标准，将其所有数据文件data3306/data目录下,3306端口是可以变化的
     """
@@ -47,7 +48,7 @@ def mkBASEDir():
         except Exception as e:
             return("mkBASEDir. %s" % str(e))
             
-def checkSetMysqlOwnerGroup(port):
+def checkSetMysqlOwnerGroup():
             with open('/etc/passwd','r') as fl:
                 for ln in fl:
                     semysql = re.search(r'mysql',ln,re.I)
@@ -78,3 +79,7 @@ def checkSetMysqlOwnerGroup(port):
                 sys.exit(1)
             if not(os.stat(MYSQL_DATA_DIR+'mysql%s/tmp' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_gid == mysql_gid):
                 return("mysql datadir sub directory tmp privileges is wrong")
+
+
+if __name__ == '__main__':
+    mkDATADir()

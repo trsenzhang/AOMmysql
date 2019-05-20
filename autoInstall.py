@@ -36,6 +36,7 @@ INSTALL_MYSQL_SOFT_PWD='root'
 #这个目录是自己定义出来的，方面集中化定制管理
 SERVER_SOFT_DIR='/dfile'
 SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
+CUR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 global logger
 
@@ -84,17 +85,26 @@ if __name__ == '__main__':
                 sendSoft(self,hostname,port,username,password)
                 note:int(port) ，port必须是int类型
             """
-            
-            
+                      
             newI().sendSoft(os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
-            
-            
-            
+                        
             """
                 初始化环境变量
             """
             ##检查是否有python环境           
-            newI().execRmotecmd("python --version")
+            logger.info(newI().execRmotecmd("python --version"))
+            if(1):
+                #addgroup user， privilege
+                _L_PYFILE='%s/pullpy/initMysqlENV.py' %(CUR_PATH)
+                _R_PYFILE='/tmp/initMysqlENV.py'
+                newI().sendSoft(_L_PYFILE,_R_PYFILE)
+                
+                
+            else:
+                logger.info("please check target servers py env.")
+            
+            
+                
             
             
     else:
