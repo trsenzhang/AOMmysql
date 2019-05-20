@@ -8,18 +8,20 @@ import paramiko
 
 class Trans(object):
     
-    def __init__(self,logger,localpath,remotepath):
+    def __init__(self,logger,hostname,port,username,password):
         self.logger = logger
-        self.localpath = localpath
-        self.remotepath = remotepath
+        self.hostname = hostname
+        self.port = port
+        self.username = username
+        self.password = password
           
-    def sendSoft(self,hostname,port,username,password):
+    def sendSoft(self,localpath,remotepath):
         try:
-            t=paramiko.Transport(hostname,port)
-            t.connect(username=username,password=password)
+            t=paramiko.Transport(self.hostname,self.port)
+            t.connect(username=self.username,password=self.password)
             try:
                 sftp=paramiko.SFTPClient.from_transport(t)
-                sftp.put(self.localpath,self.remotepath)
+                sftp.put(localpath,remotepath)
                 t.close()
                 self.logger.info("send soft success")
             except Exception as e:
@@ -27,4 +29,3 @@ class Trans(object):
         except Exception as e:
             self.logger.error("connect error. %s " % str(e))
                 
-

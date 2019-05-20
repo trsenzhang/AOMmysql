@@ -126,16 +126,29 @@ if __name__ == '__main__':
         初始化日志格式
     """
     logger = RecordLog('auto_install_mysql').log()
+    
+    """
+        平台判定
+    """
     if(platform.system()=='Linux'):
             logger.info('The platform check pass.')
             """
                 copy soft to remote servers,
                 single porcess opt
                 sendSoft(self,hostname,port,username,password)
+                note:int(port) ，port必须是int类型
             """
             
-            tr=Trans(logger,os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
-            tr.sendSoft(INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
+            tr=Trans(logger,INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
+            tr.sendSoft(os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
+            
+            
+            """
+                初始化环境变量
+            """
+            ##检查是否有python环境            
+            
+            
             
     else:
             logger.info('The ENV is not linux,waiting coding')
