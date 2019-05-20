@@ -62,8 +62,10 @@ def unzipMysqlInstallPackage(mysqlInstallPackage):
             
 
 
-    
-    
+
+def newI():
+    tr=OptRemote(logger,INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
+    return(tr)
 
 if __name__ == '__main__':
     """
@@ -83,16 +85,16 @@ if __name__ == '__main__':
                 note:int(port) ，port必须是int类型
             """
             
-            tr=OptRemote(logger,INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
-            tr.sendSoft(os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
+            
+            newI().sendSoft(os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
             
             
             
             """
                 初始化环境变量
             """
-            ##检查是否有python环境            
-            logger.info(tr.execRmotecmd("python --version"))
+            ##检查是否有python环境           
+            logger.info(newI().execRmotecmd("python --version"))
             
             
     else:
