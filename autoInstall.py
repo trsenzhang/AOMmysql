@@ -9,7 +9,7 @@ Created on Wed Feb 27 09:21:47 2019
 
 import os
 from util.record_logging import RecordLog
-from util.transSoft import Trans
+from util.transSoft import OptRemote
 import platform
 import re
 import sys
@@ -25,7 +25,7 @@ MYSQL_CNF_DIR = '/etc/'
 MYSQL_BACK_DIR = '/data/backup/mysql/'
 
 INSTALL_MYSQL_SOFT_DIR='/usr/local'
-INSTALL_MYSQL_SOFT_IP='172.18.0.150'
+INSTALL_MYSQL_SOFT_IP='172.18.0.160'
 INSTALL_MYSQL_SOFT_PORT='22'
 INSTALL_MYSQL_SOFT_USER='root'
 INSTALL_MYSQL_SOFT_PWD='root'
@@ -39,11 +39,6 @@ SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
 
 global logger
 
-
-def initMysqlEnvVar():
-    with open('/etc/profile','a') as fl:
-        fl.write('export PATH=$PATH;/usr/local/mysql/bin'+'\n')
-    os.system('source /etc/profile')
     
     
 def unzipMysqlInstallPackage(mysqlInstallPackage):
@@ -65,59 +60,8 @@ def unzipMysqlInstallPackage(mysqlInstallPackage):
         except Exception as e:
             logger.error(str(e))
             
-def mkDATADir(port):
-    """
-        统一标准，将其所有数据文件data3306/data目录下,3306端口是可以变化的
-    """
-    if os.path.exists('/data/mysql/mysql%s/data' % port):
-        logger.info('mysql%s\/data directory already install' % port)
-        sys.exit(1)
-        try:
-            os.makedirs('/data/mysql/mysql%s/{data,tmp,logs}' % port)
-        except Exception as e:
-            logger.info(str(e))
 
-def mkBASEDir():
-    if os.path.exits('/usr/local/mysql'):
-        logger.info('The mysql base dirctory is exists.')
-        sys.exit(1)
-        try:
-            os.makedirs('/usr/local/mysql')
-        except Exception as e:
-            logger.info(str(e))
-            
-def checkSetMysqlOwnerGroup(port):
-            with open('/etc/passwd','r') as fl:
-                for ln in fl:
-                    semysql = re.search(r'mysql',ln,re.I)
-            
-            if semysql:
-                os.system('chown -R mysql.mysql %s' % MYSQL_DATA_DIR)
-                os.system('chown -R mysql.mysql %s' % MYSQL_BASE_DIR)
-            else:
-                os.system('groupadd mysql')
-                os.system('useradd -g mysql -d /usr/local/mysql -s /sbin/nologin -MN mysql')
-                os.system('chown -R mysql.mysql %s' % MYSQL_DATA_DIR)
-                os.system('chown -R mysql.mysql %s' % MYSQL_BASE_DIR)
-            
-            list=[]
-            for i in pwd.getpwnam('mysql'):
-                list.append[i]
-            mysql_uid=list[2]
-            mysql_gid=list[3]
-            
-            if not(os.stat(MYSQL_DATA_DIR).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR).st_gid == mysql_gid):
-                logger.error("mysql datadir privilege is wrong.")
-                sys.exit(1)
-            if not(os.stat(MYSQL_DATA_DIR+'mysql%s/data' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/data' %(port)).st_gid == mysql_gid):
-                logger.error("mysql datadir sub directory data privileges is wrong")
-                sys.exit(1)
-            if not(os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_gid == mysql_gid):
-                logger.error("mysql datadir sub directory logs privileges is wrong")
-                sys.exit(1)
-            if not(os.stat(MYSQL_DATA_DIR+'mysql%s/tmp' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_gid == mysql_gid):
-                logger.error("mysql datadir sub directory tmp privileges is wrong")
-                sys.exit(1)
+
     
     
 
@@ -139,15 +83,16 @@ if __name__ == '__main__':
                 note:int(port) ，port必须是int类型
             """
             
-            tr=Trans(logger,INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
+            tr=OptRemote(logger,INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
             tr.sendSoft(os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
+            
             
             
             """
                 初始化环境变量
             """
             ##检查是否有python环境            
-            
+            logger.info(tr.execRmotecmd("python --version"))
             
             
     else:
