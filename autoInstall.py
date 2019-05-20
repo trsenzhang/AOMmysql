@@ -94,7 +94,7 @@ if __name__ == '__main__':
                 初始化环境变量
             """
             ##检查是否有python环境           
-            logger.info(newI().execRmotecmd("python --version"))
+            newI().execRmotecmd("python --version")
             
             
     else:
