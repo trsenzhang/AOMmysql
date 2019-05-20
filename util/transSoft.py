@@ -23,8 +23,8 @@ class Trans(object):
                 t.close()
                 self.logger.info("send soft success")
             except Exception as e:
-                self.logger.error("Error-sendSoft failed.")
+                self.logger.error("sendSoft failed. %s" % str(e))
         except Exception as e:
-            self.logger.error("Error-connect error. ")
+            self.logger.error("connect error. %s " % str(e))
                 
 
