@@ -9,6 +9,7 @@ Created on Wed Feb 27 09:21:47 2019
 
 import os
 from util.record_logging import RecordLog
+from util.transSoft import Trans
 import platform
 import re
 import sys
@@ -22,6 +23,19 @@ MYSQL_DATA_DIR = '/data/mysql/'
 MYSQL_BASE_DIR = '/usr/local/mysql/'
 MYSQL_CNF_DIR = '/etc/'
 MYSQL_BACK_DIR = '/data/backup/mysql/'
+
+INSTALL_MYSQL_SOFT_DIR='/usr/local'
+INSTALL_MYSQL_SOFT_IP='172.18.0.150'
+INSTALL_MYSQL_SOFT_PORT='22'
+INSTALL_MYSQL_SOFT_USER='root'
+INSTALL_MYSQL_SOFT_PWD='root'
+
+"""
+    soft server center
+"""
+#这个目录是自己定义出来的，方面集中化定制管理
+SERVER_SOFT_DIR='/dfile'
+SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
 
 global logger
 
@@ -105,7 +119,7 @@ def checkSetMysqlOwnerGroup(port):
                 logger.error("mysql datadir sub directory tmp privileges is wrong")
                 sys.exit(1)
     
-
+    
 
 if __name__ == '__main__':
     """
@@ -114,6 +128,14 @@ if __name__ == '__main__':
     logger = RecordLog('auto_install_mysql').log()
     if(platform.system()=='Linux'):
             logger.info('The platform check pass.')
+            """
+                copy soft to remote servers,
+                single porcess opt
+                sendSoft(self,hostname,port,username,password)
+            """
+            
+            tr=Trans(logger,os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
+            tr.sendSoft(INSTALL_MYSQL_SOFT_IP,INSTALL_MYSQL_SOFT_PORT,INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
             
     else:
             logger.info('The ENV is not linux,waiting coding')
