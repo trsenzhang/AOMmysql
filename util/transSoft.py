@@ -32,11 +32,12 @@ class OptRemote(object):
     
     def execRmotecmd(self,excmd):
         try:
-            ssh = paramiko.SSHClient()
-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(self.hostname,self.port,self.username,self.password)
+            t = paramiko.SSHClient()
+            t.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            t.connect(self.hostname,self.port,self.username,self.password)
             try:
-                stdin,stdout,stderr=ssh.exec_command(excmd) #python --version
+                stdin,stdout,stderr=t.exec_command(excmd) #python --version
+                t.close()
                 return(stdin)
             except Exception as e:
                 self.logger.error("func execRmotecmd exec error. %s " % str(e))
