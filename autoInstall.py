@@ -135,7 +135,7 @@ if __name__ == '__main__':
             """
             
             tr=Trans(logger,os.path.join(SERVER_SOFT_DIR,SOFT_NAME),os.path.join(INSTALL_MYSQL_SOFT_DIR,SOFT_NAME))
-            tr.sendSoft(INSTALL_MYSQL_SOFT_IP,INSTALL_MYSQL_SOFT_PORT,INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
+            tr.sendSoft(INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
             
     else:
             logger.info('The ENV is not linux,waiting coding')
