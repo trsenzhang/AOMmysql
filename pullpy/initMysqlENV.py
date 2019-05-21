@@ -49,7 +49,7 @@ def unzipMysqlInstallPackage():
     """
     #_instalpk='/usr/local/%s' % SOFT_NAME
     try:
-        tar = tarfile.open('/usr/local/%s',"r:gz" % SOFT_NAME) 
+        tar = tarfile.open('/usr/local/%s',"r" % SOFT_NAME) 
         file_names = tar.getnames()
         for file_name in file_names:
             tar.extract(file_name,'/usr/local')
@@ -59,7 +59,6 @@ def unzipMysqlInstallPackage():
         print(str(e))
     
     os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME[:-7])
-    os.system('rm -rf /usr/local/%s' % SOFT_NAME)
             
 def checkSetMysqlOwnerGroup():
             with open('/etc/passwd','r') as fl:
