@@ -49,7 +49,7 @@ def unzipMysqlInstallPackage():
     """
     #_instalpk='/usr/local/%s' % SOFT_NAME
     try:
-        tar = tarfile.open('/usr/local',"r:gz")
+        tar = tarfile.open('/usr/local/%s',"r:gz") % SOFT_NAME
         file_names = tar.getnames()
         for file_name in file_names:
             tar.extract(file_name,'/usr/local')
