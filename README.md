@@ -14,7 +14,9 @@ cd /dfile/python/test/AOMmysql
 
 /dfile/python/env/anaconda3/bin/python autoInstall.py
 
-日志记录：
+
+日志检查：
+
 1.在AOMmysql/logs下面产生主干程序的日志信息
 
 2.在目标服务器上/tmp目录下回产生相关日志信息
