@@ -9,6 +9,7 @@ import os
 import sys
 import re
 import pwd
+import tarfile
 
 
 MYSQL_DATA_DIR = '/data/mysql/'
@@ -46,13 +47,18 @@ def unzipMysqlInstallPackage():
     """
         将tar包解压至base dirctory目录下
     """
-    _instalpk='/usr/local/%s' % SOFT_NAME
+    #_instalpk='/usr/local/%s' % SOFT_NAME
     try:
-        os.system('cd /usr/local/')
-        os.system('tar -xvf %s' % _instalpk)
+        tar = tarfile.open('/usr/local',"r:gz")
+        file_names = tar.getnames()
+        for file_name in file_names:
+            tar.extract(file_name,'/usr/local')
+        tar.close()
         os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME[:-7])
+        os.system('rm -rf /usr/local/%s' % SOFT_NAME)
     except Exception as e:
         print(str(e))
+    
             
 def checkSetMysqlOwnerGroup():
             with open('/etc/passwd','r') as fl:
