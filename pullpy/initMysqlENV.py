@@ -9,7 +9,6 @@ import os
 import sys
 import re
 import pwd
-import tarfile
 
 
 MYSQL_DATA_DIR = '/data/mysql/'
@@ -18,8 +17,6 @@ MYSQL_CNF_DIR = '/etc/'
 MYSQL_BACK_DIR = '/data/backup/mysql/'
 port=3306
 SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
-#SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
-mysqlInstallPackage='/usr/local/%s' % (SOFT_NAME)
 
 def initMysqlEnvVar():
     try:
@@ -51,18 +48,14 @@ def unzipMysqlInstallPackage():
     """
         将tar包解压至base dirctory目录下
     """
-    if not os.path.exists(mysqlInstallPackage):
-        print("mysql install package %s is not exists" % mysqlInstallPackage )
+    _instalpk='/usr/local/%s' % SOFT_NAME
+    if not os.path.exists():
+        print("mysql install package %s is not exists" % _instalpk )
         sys.exit(1)
     else:
         try:
-            os.chdir(os.path.dirname(mysqlInstallPackage))
-            tf = tarfile.open(mysqlInstallPackage,'r:gz')
-            file_names = tf.getnames()
-            for file_name in file_names:
-                tf.extract(file_name,MYSQL_BASE_DIR)
-            tf.extractall()
-            tf.close()
+            os.system('tar -xvf %s' % _instalpk)
+            os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME[:-7])
         except Exception as e:
             print(str(e))
             

@@ -11,10 +11,6 @@ import os
 from util.record_logging import RecordLog
 from util.transSoft import OptRemote
 import platform
-import re
-import sys
-import pwd
-import tarfile
 
 """
     设置安装目录和数据目录的权限
@@ -36,7 +32,7 @@ INSTALL_MYSQL_SOFT_PWD='root'
 #这个目录是自己定义出来的，方面集中化定制管理
 SERVER_SOFT_DIR='/dfile'
 SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
-#SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
+SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
 CUR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 global logger

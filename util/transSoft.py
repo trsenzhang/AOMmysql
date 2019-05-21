@@ -38,7 +38,7 @@ class OptRemote(object):
             try:
                 stdin,stdout,stderr=t.exec_command(excmd) #python --version
                 t.close()
-                return('good')
+                return(stdout)
             except Exception as e:
                 self.logger.error("func execRmotecmd exec error. %s " % str(e))
         except Exception as e:
