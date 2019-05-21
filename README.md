@@ -16,6 +16,8 @@
 功能运行方式：
 
 1.自动化安装
+流程图如下：
+![1]https://github.com/trsenzhang/AOMmysql/blob/master/doc/auto_install_mysql_soft.PNG
 
 /dfile/python/env/anaconda3/bin/python autoInstall.py
 
