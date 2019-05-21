@@ -94,11 +94,13 @@ if __name__ == '__main__':
             ##检查是否有python环境           
             logger.info(newI().execRmotecmd("python --version"))
             if(newI().execRmotecmd("python --version")=='good'):
-                #addgroup user， 
+                #push py files
                 _L_PYFILE='%s/pullpy/initMysqlENV.py' %(CUR_PATH)
                 _R_PYFILE='/tmp/initMysqlENV.py'
                 newI().sendSoft(_L_PYFILE,_R_PYFILE)
                 logger.info('send py files success.')
+                #
+                logger.info(newI().execRmotecmd("python /tmp/initMysqlENV.py test"))
                 
                 
             else:

@@ -22,7 +22,7 @@ def initMysqlEnvVar():
         with open('/etc/profile','a') as fl:
             fl.write('export PATH=$PATH;/usr/local/mysql/bin'+'\n')
         os.system('source /etc/profile')
-        return("source /etc/profile file successful.")
+        return("1")
     except Exception as e:
         return(str(e))
         
@@ -36,6 +36,7 @@ def mkDATADir():
         sys.exit(1)
         try:
             os.makedirs('/data/mysql/mysql%s/{data,tmp,logs}' % port)
+            return(1)
         except Exception as e:
            return("mkDATADir failed. %s" % str(e))
 
@@ -45,6 +46,7 @@ def mkBASEDir():
         sys.exit(1)
         try:
             os.makedirs('/usr/local/mysql')
+            return(1)
         except Exception as e:
             return("mkBASEDir. %s" % str(e))
             
@@ -82,4 +84,13 @@ def checkSetMysqlOwnerGroup():
 
 
 if __name__ == '__main__':
-    mkDATADir()
+    if(sys.argv[1]=='mkdatadir'):
+        mkDATADir()
+    elif(sys.argv[1]=='mkbasedir'):
+        mkBASEDir()
+    elif(sys.argv[1]=='addusergroup'):
+        checkSetMysqlOwnerGroup()
+    elif(sys.argv[1]=='initenv'):
+        initMysqlEnvVar()
+    else:
+        print('not_param')
