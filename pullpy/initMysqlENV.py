@@ -48,6 +48,7 @@ def unzipMysqlInstallPackage():
     """
     _instalpk='/usr/local/%s' % SOFT_NAME
     try:
+        os.system('cd /usr/local/')
         os.system('tar -xvf %s' % _instalpk)
         os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME[:-7])
     except Exception as e:
