@@ -76,15 +76,17 @@ if __name__ == '__main__':
                 _R_PYFILE='/tmp/initMysqlENV.py'
                 newI().sendSoft(_L_PYFILE,_R_PYFILE)
                 
-                
+                #初始化remote server mysql安装环境
                 if(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir")==0):
-                    logger.info('remote servers data directory create success.')
-                    
-                elif(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm")==0):
-                    logger.info('remote servers mysql soft unzip success.')
-                else:
-                    logger.info('remote serves opt failed.')
-            
+                    logger.info('remote servers data directory create success.')  
+                    if(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm")==0):
+                        logger.info('remote servers mysql soft unzip success.')
+                        if(newI().execRmotecmd("python /tmp/initMysqlENV.py addusergroup")==0):
+                            logger.info('remote servers create user and group success.')
+                            if(newI().execRmotecmd("python /tmp/initMysqlENV.py initenv")==0):
+                                logger.info('remote servers /etc/profile update success.')
+                
+                
             else:
                 logger.info("please check target servers py env.")
             
