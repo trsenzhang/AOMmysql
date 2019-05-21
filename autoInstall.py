@@ -36,31 +36,10 @@ INSTALL_MYSQL_SOFT_PWD='root'
 #这个目录是自己定义出来的，方面集中化定制管理
 SERVER_SOFT_DIR='/dfile'
 SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
-SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
+#SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
 CUR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 global logger
-
-    
-    
-def unzipMysqlInstallPackage(mysqlInstallPackage):
-    """
-        将tar包解压至base dirctory目录下
-    """
-    if not os.path.exists(mysqlInstallPackage):
-        logger.error("mysql install package %s is not exists" % mysqlInstallPackage )
-        sys.exit(1)
-    else:
-        try:
-            os.chdir(os.path.dirname(mysqlInstallPackage))
-            tf = tarfile.open(mysqlInstallPackage,'r:gz')
-            file_names = tf.getnames()
-            for file_name in file_names:
-                tf.extract(file_name,MYSQL_BASE_DIR)
-            tf.extractall()
-            tf.close()
-        except Exception as e:
-            logger.error(str(e))
             
 
 
@@ -102,6 +81,7 @@ if __name__ == '__main__':
                 logger.info('send py files success.')
                 #
                 logger.info(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir"))
+                logger.info(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm"))
                 
                 
             else:

@@ -9,6 +9,7 @@ import os
 import sys
 import re
 import pwd
+import tarfile
 
 
 MYSQL_DATA_DIR = '/data/mysql/'
@@ -17,16 +18,17 @@ MYSQL_CNF_DIR = '/etc/'
 MYSQL_BACK_DIR = '/data/backup/mysql/'
 port=3306
 SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
-SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
+#SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
+mysqlInstallPackage='/usr/local/%s' % (SOFT_NAME)
 
 def initMysqlEnvVar():
     try:
         with open('/etc/profile','a') as fl:
             fl.write('export PATH=$PATH;/usr/local/mysql/bin'+'\n')
         os.system('source /etc/profile')
-        return("1")
+        print("1")
     except Exception as e:
-        return(str(e))
+        print(str(e))
         
 
 def mkDATADir():
@@ -34,26 +36,35 @@ def mkDATADir():
         统一标准，将其所有数据文件data3306/data目录下,3306端口是可以变化的
     """
     if os.path.exists('/data/mysql/mysql%s/data' % port):
-        return('mysql%s\/data directory already install' % port)
+        print('mysql%s\/data directory already install' % port)
         sys.exit(1)
     else:
         try:
-            os.makedirs('/data/mysql/mysql%s/{data,tmp,logs}' % port)
-            return(1)
+            os.makedirs('/data/mysql/mysql%s/data' % port)
+            os.makedirs('/data/mysql/mysql%s/tmp' % port)
+            os.makedirs('/data/mysql/mysql%s/logs' % port)
+            print("1")
         except Exception as e:
-            return("mkDATADir failed. %s" % str(e))
+            print("mkDATADir failed. %s" % str(e))
 
-def unzipMsoft():
-    if os.path.exits('/usr/local/mysql'):
-        return('The mysql base dirctory is exists.')
+def unzipMysqlInstallPackage(mysqlInstallPackage):
+    """
+        将tar包解压至base dirctory目录下
+    """
+    if not os.path.exists(mysqlInstallPackage):
+        print("mysql install package %s is not exists" % mysqlInstallPackage )
         sys.exit(1)
     else:
         try:
-            os.system('tar -xvf /usr/local/%s' % SOFT_NAME)
-            os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME_FILE)
-            return(1)
+            os.chdir(os.path.dirname(mysqlInstallPackage))
+            tf = tarfile.open(mysqlInstallPackage,'r:gz')
+            file_names = tf.getnames()
+            for file_name in file_names:
+                tf.extract(file_name,MYSQL_BASE_DIR)
+            tf.extractall()
+            tf.close()
         except Exception as e:
-            return("unzipMsoft. %s" % str(e))
+            print(str(e))
             
 def checkSetMysqlOwnerGroup():
             with open('/etc/passwd','r') as fl:
@@ -76,23 +87,23 @@ def checkSetMysqlOwnerGroup():
             mysql_gid=list[3]
             
             if not(os.stat(MYSQL_DATA_DIR).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR).st_gid == mysql_gid):
-                return("mysql datadir privilege is wrong.")
+                print("mysql datadir privilege is wrong.")
                 sys.exit(1)
             if not(os.stat(MYSQL_DATA_DIR+'mysql%s/data' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/data' %(port)).st_gid == mysql_gid):
-                return("mysql datadir sub directory data privileges is wrong")
+                print("mysql datadir sub directory data privileges is wrong")
                 sys.exit(1)
             if not(os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_gid == mysql_gid):
-                return("mysql datadir sub directory logs privileges is wrong")
+                print("mysql datadir sub directory logs privileges is wrong")
                 sys.exit(1)
             if not(os.stat(MYSQL_DATA_DIR+'mysql%s/tmp' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_gid == mysql_gid):
-                return("mysql datadir sub directory tmp privileges is wrong")
+                print("mysql datadir sub directory tmp privileges is wrong")
 
 
 if __name__ == '__main__':
     if(sys.argv[1]=='mkdatadir'):
         mkDATADir()
     elif(sys.argv[1]=='unzipm'):
-        unzipMsoft()
+        unzipMysqlInstallPackage()
     elif(sys.argv[1]=='addusergroup'):
         checkSetMysqlOwnerGroup()
     elif(sys.argv[1]=='initenv'):
