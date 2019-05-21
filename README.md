@@ -1,6 +1,7 @@
 # AOMmysql
 
 要求：
+
 1.要求运行python的版本在3.x
 
 2.测试中安装的mysql服务器的python环境2.7.x可通过
