@@ -47,7 +47,7 @@ def mkDATADir():
         except Exception as e:
             print("mkDATADir failed. %s" % str(e))
 
-def unzipMysqlInstallPackage(mysqlInstallPackage):
+def unzipMysqlInstallPackage():
     """
         将tar包解压至base dirctory目录下
     """
