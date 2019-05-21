@@ -23,7 +23,6 @@ def initMysqlEnvVar():
         with open('/etc/profile','a') as fl:
             fl.write('export PATH=$PATH;/usr/local/mysql/bin'+'\n')
         os.system('source /etc/profile')
-        print("1")
     except Exception as e:
         print(str(e))
         
@@ -40,7 +39,6 @@ def mkDATADir():
             os.makedirs('/data/mysql/mysql%s/data' % port)
             os.makedirs('/data/mysql/mysql%s/tmp' % port)
             os.makedirs('/data/mysql/mysql%s/logs' % port)
-            print("1")
         except Exception as e:
             print("mkDATADir failed. %s" % str(e))
 
@@ -49,15 +47,11 @@ def unzipMysqlInstallPackage():
         将tar包解压至base dirctory目录下
     """
     _instalpk='/usr/local/%s' % SOFT_NAME
-    if not os.path.exists(_instalpk):
-        print("mysql install package %s is not exists" % _instalpk )
-        sys.exit(1)
-    else:
-        try:
-            os.system('tar -xvf %s' % _instalpk)
-            os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME[:-7])
-        except Exception as e:
-            print(str(e))
+    try:
+        os.system('tar -xvf %s' % _instalpk)
+        os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME[:-7])
+    except Exception as e:
+        print(str(e))
             
 def checkSetMysqlOwnerGroup():
             with open('/etc/passwd','r') as fl:
