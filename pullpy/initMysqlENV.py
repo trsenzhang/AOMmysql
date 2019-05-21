@@ -16,6 +16,8 @@ MYSQL_BASE_DIR = '/usr/local/mysql/'
 MYSQL_CNF_DIR = '/etc/'
 MYSQL_BACK_DIR = '/data/backup/mysql/'
 port=3306
+SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
+SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
 
 def initMysqlEnvVar():
     try:
@@ -34,21 +36,24 @@ def mkDATADir():
     if os.path.exists('/data/mysql/mysql%s/data' % port):
         return('mysql%s\/data directory already install' % port)
         sys.exit(1)
+    else:
         try:
             os.makedirs('/data/mysql/mysql%s/{data,tmp,logs}' % port)
             return(1)
         except Exception as e:
-           return("mkDATADir failed. %s" % str(e))
+            return("mkDATADir failed. %s" % str(e))
 
-def mkBASEDir():
+def unzipMsoft():
     if os.path.exits('/usr/local/mysql'):
         return('The mysql base dirctory is exists.')
         sys.exit(1)
+    else:
         try:
-            os.makedirs('/usr/local/mysql')
+            os.system('tar -xvf /usr/local/%s' % SOFT_NAME)
+            os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME_FILE)
             return(1)
         except Exception as e:
-            return("mkBASEDir. %s" % str(e))
+            return("unzipMsoft. %s" % str(e))
             
 def checkSetMysqlOwnerGroup():
             with open('/etc/passwd','r') as fl:
@@ -86,8 +91,8 @@ def checkSetMysqlOwnerGroup():
 if __name__ == '__main__':
     if(sys.argv[1]=='mkdatadir'):
         mkDATADir()
-    elif(sys.argv[1]=='mkbasedir'):
-        mkBASEDir()
+    elif(sys.argv[1]=='unzipm'):
+        unzipMsoft()
     elif(sys.argv[1]=='addusergroup'):
         checkSetMysqlOwnerGroup()
     elif(sys.argv[1]=='initenv'):
