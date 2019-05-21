@@ -47,17 +47,8 @@ def unzipMysqlInstallPackage():
     """
         将tar包解压至base dirctory目录下
     """
-    #_instalpk='/usr/local/%s' % SOFT_NAME
-    try:
-        tar = tarfile.open('/usr/local/%s',"r" % SOFT_NAME) 
-        file_names = tar.getnames()
-        for file_name in file_names:
-            tar.extract(file_name,'/usr/local')
-        tar.close()
-        
-    except Exception as e:
-        print(str(e))
-    
+    _instalpk='/usr/local/%s' % SOFT_NAME
+    os.system('tar -xvf %s -C /usr/local' % _instalpk)
     os.system('mv /usr/local/%s /usr/local/mysql' % SOFT_NAME[:-7])
             
 def checkSetMysqlOwnerGroup():
