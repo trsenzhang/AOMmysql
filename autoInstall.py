@@ -100,7 +100,7 @@ if __name__ == '__main__':
                 newI().sendSoft(_L_PYFILE,_R_PYFILE)
                 logger.info('send py files success.')
                 #
-                logger.info(newI().execRmotecmd("python /tmp/initMysqlENV.py test"))
+                logger.info(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir"))
                 
                 
             else:
