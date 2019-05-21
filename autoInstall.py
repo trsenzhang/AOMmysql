@@ -74,16 +74,17 @@ if __name__ == '__main__':
                 #push py files
                 _L_PYFILE='%s/pullpy/initMysqlENV.py' %(CUR_PATH)
                 _R_PYFILE='/tmp/initMysqlENV.py'
-                if(newI().sendSoft(_L_PYFILE,_R_PYFILE)==0):
-                    logger.info('send py files success.')
-                    if(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir")==0):
-                        logger.info('remote servers data directory create success.')
-                        
-                    elif(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm")==0):
-                        logger.info('remote servers mysql soft unzip success.')
-                    else:
-                        logger.info('remote serves opt failed.')
+                newI().sendSoft(_L_PYFILE,_R_PYFILE)
                 
+                
+                if(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir")==0):
+                    logger.info('remote servers data directory create success.')
+                    
+                elif(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm")==0):
+                    logger.info('remote servers mysql soft unzip success.')
+                else:
+                    logger.info('remote serves opt failed.')
+            
             else:
                 logger.info("please check target servers py env.")
             

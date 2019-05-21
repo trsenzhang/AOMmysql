@@ -23,7 +23,7 @@ class OptRemote(object):
                 sftp=paramiko.SFTPClient.from_transport(t)
                 sftp.put(localpath,remotepath)
                 t.close()
-                self.logger.info("send soft success")
+                self.logger.info("send success")
             except Exception as e:
                 self.logger.error("sendSoft exec failed. %s" % str(e))
         except Exception as e:
