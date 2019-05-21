@@ -68,17 +68,21 @@ if __name__ == '__main__':
                 初始化环境变量
             """
             ##检查是否有python环境           
-            logger.info(newI().execRmotecmd("python --version"))
+            
             if(newI().execRmotecmd("python --version")==0):
+                logger.info("the remote server have py env.")
                 #push py files
                 _L_PYFILE='%s/pullpy/initMysqlENV.py' %(CUR_PATH)
                 _R_PYFILE='/tmp/initMysqlENV.py'
-                newI().sendSoft(_L_PYFILE,_R_PYFILE)
-                logger.info('send py files success.')
-                #
-                logger.info(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir"))
-                logger.info(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm"))
-                
+                if(newI().sendSoft(_L_PYFILE,_R_PYFILE)==0):
+                    logger.info('send py files success.')
+                    if(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir")==0):
+                        logger.info('remote servers data directory create success.')
+                        
+                    elif(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm")==0):
+                        logger.info('remote servers mysql soft unzip success.')
+                    else:
+                        logger.info('remote serves opt failed.')
                 
             else:
                 logger.info("please check target servers py env.")

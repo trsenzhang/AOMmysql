@@ -49,7 +49,7 @@ def unzipMysqlInstallPackage():
         将tar包解压至base dirctory目录下
     """
     _instalpk='/usr/local/%s' % SOFT_NAME
-    if not os.path.exists():
+    if not os.path.exists(_instalpk):
         print("mysql install package %s is not exists" % _instalpk )
         sys.exit(1)
     else:
