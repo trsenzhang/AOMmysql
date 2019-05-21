@@ -37,7 +37,7 @@ class OptRemote(object):
             t.connect(self.hostname,self.port,self.username,self.password)
             try:
                 stdin,stdout,stderr=t.exec_command(excmd) #python --version
-                return(stdout.read())
+                return(stderr.channel.recv_exit_status())
                 t.close()
             except Exception as e:
                 self.logger.error("func execRmotecmd exec error. %s " % str(e))

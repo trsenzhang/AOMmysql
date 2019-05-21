@@ -69,7 +69,7 @@ if __name__ == '__main__':
             """
             ##检查是否有python环境           
             logger.info(newI().execRmotecmd("python --version"))
-            if(newI().execRmotecmd("python --version")=='good'):
+            if(newI().execRmotecmd("python --version")==0):
                 #push py files
                 _L_PYFILE='%s/pullpy/initMysqlENV.py' %(CUR_PATH)
                 _R_PYFILE='/tmp/initMysqlENV.py'
