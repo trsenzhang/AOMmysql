@@ -145,7 +145,7 @@ def mount_dev(group_name,dir_name):
     logger.info("mount %s ." % group_name)
     os_cmd = "mount %s /%s/" % (group_name,dir_name)
     try:
-        result = os.popen(os_cmd).readlrebooines()
+        result = os.popen(os_cmd).readlines()
         print(result)
     except Exception as e:
         logger.info(str(e))
@@ -186,23 +186,27 @@ def main():
     if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0\n':
         logger.info("Not snapshot group, you not remove snapshot group.")
     else:
-        logger.info("close target db.")
-        stop_mysql('mysql3307',FLAGS.target_user,FLAGS.target_pwd)
-        logger.info("finished close target db instance.")
-        
+        logger.info("The history snapshot group already exists.")
+        if str(os.popen("ps -ef |grep 'my_snap.cnf'|grep -v grep|wc -l").read()) == '1\n':
+            logger.info("close target db.")
+            stop_mysql('mysql3307',FLAGS.target_user,FLAGS.target_pwd)
+            logger.info("finished close target db instance.")
+        else:
+            logger.info("the target db not running.")
         #
         #
         #
         umount_dev(FLAGS.snap_dev)
         remove_snap_dev()
+        logger.info("The history snapshot group was remove.")
     
     #create snap dev and mount 
     #/dev/mapper/vg_mysql-lv_mysql  /dev/mapper/vg_mysql-mysqllvsnap
     #
     create_snap(1,FLAGS.source_dev)
-    mount_dev(FLAGS.snap_dev,"snap_data")
+    #mount_dev(FLAGS.snap_dev,"snap_data")
     
-    mount_dev(FLAGS.source_dev,"data")
+    #mount_dev(FLAGS.source_dev,"data")
     
         
     
