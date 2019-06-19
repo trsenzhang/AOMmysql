@@ -110,7 +110,7 @@ def stop_mysql(socket,user,pwd):
     logger.info("stop mysql intance end.")
 
 def umount_dev(group_name):
-    logger.info("umount %s .") % group_name
+    logger.info("umount %s ." % group_name) 
     os_cmd1 = "fuser -k %s" % group_name
     os_cmd2 = "umount %s" % group_name
     try:
@@ -119,7 +119,7 @@ def umount_dev(group_name):
             logger.info(result)
     except Exception as e:
         logger.error(str(e))
-    logger.info("umount %s end.") % group_name
+    logger.info("umount %s end." % group_name) 
     
 def create_snap(size,group_name):
     logger.info("create snap mysqllvsnap") 
@@ -133,24 +133,24 @@ def create_snap(size,group_name):
     logger.info("create snap mysqllvsnap end.")
     
 def start_mysql(cfg ,s1):
-    logger.info("starting %s mysql db.") % s1 
+    logger.info("starting %s mysql db."  % s1 )
     os_cmd="%s/bin/mysqld --defaults-file=/conf/%s &" % (FLAGS.db_base,cfg)
     try:
         result = os.popen(os_cmd).readlines()
         print(result)
     except Exception as e:
         logger.info(str(e))
-    logger.info("starting %s mysql db end.") % s1
+    logger.info("starting %s mysql db end." % s1) 
 
 def mount_dev(group_name,dir_name):
-    logger.info("mount %s .") % group_name
+    logger.info("mount %s ." % group_name)
     os_cmd = "mount %s /%s/" % (group_name,dir_name)
     try:
         result = os.popen(os_cmd).readlrebooines()
         print(result)
     except Exception as e:
         logger.info(str(e))
-    logger.info("mount %s end.") % group_name
+    logger.info("mount %s end." % group_name) 
 
 def remove_snap_dev():
     logger.info("remove snap ")
@@ -166,20 +166,22 @@ def main():
     #close source db and slave thread
     #mysql.sock   
     #mysql3307.sock
-    logger.info("close source db.")
-    stop_slave('source')
+    if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) == '1':
     
-    stop_mysql('mysql',FLAGS.source_user,FLAGS.source_pwd)
-    
-    logger.info("finished close source db.")
-    
+        logger.info("close source db.")
+        stop_slave('source')
+        
+        stop_mysql('mysql',FLAGS.source_user,FLAGS.source_pwd)
+        
+        logger.info("finished close source db.")
+    else:
+        logger("The source db not running.")
     #source_dev snap_dev
     umount_dev(FLAGS.source_dev)
     
     #remove history snap dev
 
-    lvm_snap="lvs |grep 'mysqllvsnap' |wc -l"
-    if lvm_snap == 0:
+    if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0':
         logger.info("Not snapshot group, you don't remove snapshot group.")
     else:
         logger.info("close target db.")
