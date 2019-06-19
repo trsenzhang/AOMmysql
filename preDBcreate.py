@@ -95,9 +95,9 @@ def reset_slave():
     cursor.close()
     conn.close()
 
-def stop_mysql(name,user,pwd):
+def stop_mysql(socket,user,pwd):
     logger.info("stop mysql intance.")
-    os_cmd="%s/bin/mysqladmin -u%s-p%s -S/tmp/%s shutdown" % (FLAGS.db_base,user,pwd,name)
+    os_cmd="%s/bin/mysqladmin -u%s-p%s -S/tmp/%s.sock shutdown" % (FLAGS.db_base,user,pwd,socket)
     try:
         result=os.popen(os_cmd).readlines()
         print(result)
@@ -128,9 +128,9 @@ def create_snap(name):
         logger.info(str(e))
     logger.info("create snap mysqllvsnap end.")
     
-def start_mysql(name ,s1):
+def start_mysql(cfg ,s1):
     logger.info("starting %s mysql db.") % s1 
-    os_cmd="%s/bin/mysqld --defaults-file=/conf/%s &" % (FLAGS.db_base,name)
+    os_cmd="%s/bin/mysqld --defaults-file=/conf/%s &" % (FLAGS.db_base,cfg)
     try:
         result = os.popen(os_cmd).readlines()
         print(result)
@@ -159,7 +159,16 @@ def remove_snap_dev():
     logger("remove snap end.")
     
 def main():
-    pass
+    #关闭source db
+    #mysql.sock   
+    #mysql3307.sock
+    logger.info("close source db.")
+    stop_slave('source')
+    
+    stop_mysql('mysql',FLAGS.source_user,FLAGS.source_pwd)
+    
+    logger.info("finished close source db.")
+    
     
 
 if __name__ == '__main__':
@@ -172,6 +181,7 @@ if __name__ == '__main__':
             new_argv = ParseArgs(sys.argv[1:])
             print(new_argv)
             print(FLAGS)
+            main()
         else:
             logger.info('The ENV is not linux,waiting coding')
             
