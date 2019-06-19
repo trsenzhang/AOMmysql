@@ -153,19 +153,21 @@ def mount_dev(group_name,dir_name):
 
 def remove_snap_dev():
     logger.info("remove snap ")
-    os_cmd = "lvremove %s" % FLAGS.snap_dev
+    os_cmd = "echo 'y'|lvremove %s" % FLAGS.snap_dev
     try:
         result = os.popen(os_cmd).readlines()
         print(result)
     except Exception as e:
         logger.info(str(e))
-    logger("remove snap end.")
+    logger.info("remove snap end.")
     
 def main():
     #close source db and slave thread
     #mysql.sock   
     #mysql3307.sock
+    print('------------')
     print(str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()))
+    print('------------')
     if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) == '1':
         logger.info("close source db.")
         stop_slave('source')
