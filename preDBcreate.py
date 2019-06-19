@@ -56,6 +56,8 @@ DEFINE_string('snap_dev', '/dev/mapper/vg_mysql-mysqllvsnap', 'snap db dev.')
 DEFINE_string('db_host', '127.0.0.1', 'source and target database host ip address')
 
 
+MYSQL_SHOW_SLAVE_STATUS  = 'SHOW SLAVE STATUS;'
+
 
 def ShowUsage():
     parser.print_help()
@@ -75,6 +77,14 @@ def get_conn(flag):
     else:
         exit(1)
         
+def get_slave_status():
+    conn = get_conn('source')
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute(MYSQL_SHOW_SLAVE_STATUS)
+    result = cursor.fetchone()
+    return result
+
+      
 def stop_slave(flag):
     conn = get_conn(flag)
     sql = "stop slave"
@@ -204,9 +214,40 @@ def main():
     #/dev/mapper/vg_mysql-lv_mysql  /dev/mapper/vg_mysql-mysqllvsnap
     #
     create_snap(1,FLAGS.source_dev)
-    #mount_dev(FLAGS.snap_dev,"snap_data")
     
-    #mount_dev(FLAGS.source_dev,"data")
+    mount_dev(FLAGS.snap_dev,"snap_data")
+    
+    mount_dev(FLAGS.source_dev,"data")
+    
+    #start source db and start slave
+    start_mysql('my.cnf','source')
+    
+    start_slave('source')
+    
+    
+    
+    #start target db and reset slave
+    start_mysql('my_snap.cnf','target')
+    stop_slave('target')
+    reset_slave()
+    
+    
+    #start source io_thread
+    start_slave('source')
+    
+    
+    
+    
+    '''
+    r = get_slave_status()
+    
+    if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
+        #start snap db
+        pass
+    else:
+        logger.info("The source db error.")
+    '''
+    
     
         
     
@@ -218,9 +259,6 @@ if __name__ == '__main__':
         
         if(platform.system()=='Linux'):
             logger.info('The platform check pass.')
-            new_argv = ParseArgs(sys.argv[1:])
-            print(new_argv)
-            print(FLAGS)
             main()
         else:
             logger.info('The ENV is not linux,waiting coding')
