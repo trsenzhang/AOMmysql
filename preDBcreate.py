@@ -87,7 +87,7 @@ def get_slave_status():
       
 def stop_slave(flag):
     conn = get_conn(flag)
-    sql = "stop slave"
+    sql = "stop slave;"
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
@@ -95,7 +95,7 @@ def stop_slave(flag):
 
 def start_slave(flag):
     conn = get_conn(flag)
-    sql = "start slave"
+    sql = "start slave;"
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
@@ -103,7 +103,7 @@ def start_slave(flag):
 
 def reset_slave():
     conn = get_conn('target')
-    sql = "reset slave all"
+    sql = "reset slave all;"
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
@@ -223,6 +223,8 @@ def main():
     start_mysql('my.cnf','source')
     
     start_slave('source')
+    
+    
     
     
     
