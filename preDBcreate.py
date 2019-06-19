@@ -167,7 +167,6 @@ def main():
     #mysql.sock   
     #mysql3307.sock
     if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) == '1':
-    
         logger.info("close source db.")
         stop_slave('source')
         
@@ -175,7 +174,7 @@ def main():
         
         logger.info("finished close source db.")
     else:
-        logger("The source db not running.")
+        logger.info("The source db not running.")
     #source_dev snap_dev
     umount_dev(FLAGS.source_dev)
     
