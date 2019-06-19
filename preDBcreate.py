@@ -165,10 +165,7 @@ def main():
     #close source db and slave thread
     #mysql.sock   
     #mysql3307.sock
-    print('------------')
-    print(str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()))
-    print('------------')
-    if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) == '1':
+    if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").readlines()) == '1\n':
         logger.info("close source db.")
         stop_slave('source')
         
