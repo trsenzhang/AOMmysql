@@ -17,6 +17,12 @@
 
 1.自动化安装
 
+流程图如下：
+
+![image](https://github.com/trsenzhang/AOMmysql/blob/master/doc/auto_install_mysql_soft.PNG)
+
+运行如下脚本：
+
 /dfile/python/env/anaconda3/bin/python autoInstall.py
 
 
