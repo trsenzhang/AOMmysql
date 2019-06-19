@@ -103,8 +103,7 @@ def stop_mysql(socket,user,pwd):
     logger.info("stop mysql intance.")
     os_cmd="%s/bin/mysqladmin -u%s -p%s -S/tmp/%s.sock shutdown" % (FLAGS.db_base,user,pwd,socket)
     try:
-        result=os.popen(os_cmd).readlines()
-        logger.info(result)
+        os.popen(os_cmd).readlines()
     except Exception as e:
         logger.error(str(e))
     logger.info("stop mysql intance end.")
@@ -116,7 +115,7 @@ def umount_dev(group_name):
     try:
         for i in os_cmd1,os_cmd2:
             result = os.popen(i).readlines()
-            logger.info(result)
+            print(result)
     except Exception as e:
         logger.error(str(e))
     logger.info("umount %s end." % group_name) 
@@ -176,11 +175,14 @@ def main():
     else:
         logger.info("The source db not running.")
     #source_dev snap_dev
-    umount_dev(FLAGS.source_dev)
-    
+    try:
+        umount_dev(FLAGS.source_dev)
+    except Exception as e:
+        logger.error(str(e))
+        
     #remove history snap dev
 
-    if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0':
+    if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0\n':
         logger.info("Not snapshot group, you don't remove snapshot group.")
     else:
         logger.info("close target db.")
