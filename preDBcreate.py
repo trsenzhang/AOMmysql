@@ -183,7 +183,7 @@ def main():
     #remove history snap dev
 
     if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0\n':
-        logger.info("Not snapshot group, you don't remove snapshot group.")
+        logger.info("Not snapshot group, you not remove snapshot group.")
     else:
         logger.info("close target db.")
         stop_mysql('mysql3307',FLAGS.target_user,FLAGS.target_pwd)
@@ -198,7 +198,7 @@ def main():
     #create snap dev and mount 
     #/dev/mapper/vg_mysql-lv_mysql  /dev/mapper/vg_mysql-mysqllvsnap
     #
-    create_snap(1,FLAGS.snap_dev)
+    create_snap(1,FLAGS.source_dev)
     mount_dev(FLAGS.snap_dev,"snap_data")
     
     mount_dev(FLAGS.source_dev,"data")
