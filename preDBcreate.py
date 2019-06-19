@@ -258,7 +258,10 @@ if __name__ == '__main__':
         logger = RecordLog('preDBcreate').log()
         
         if(platform.system()=='Linux'):
+            
             logger.info('The platform check pass.')
+            new_argv = ParseArgs(sys.argv[1:])
+            logger.info (FLAGS)
             main()
         else:
             logger.info('The ENV is not linux,waiting coding')
