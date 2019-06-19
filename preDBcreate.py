@@ -97,12 +97,12 @@ def reset_slave():
 
 def stop_mysql(socket,user,pwd):
     logger.info("stop mysql intance.")
-    os_cmd="%s/bin/mysqladmin -u%s-p%s -S/tmp/%s.sock shutdown" % (FLAGS.db_base,user,pwd,socket)
+    os_cmd="%s/bin/mysqladmin -u%s -p%s -S/tmp/%s.sock shutdown" % (FLAGS.db_base,user,pwd,socket)
     try:
         result=os.popen(os_cmd).readlines()
-        print(result)
+        logger.info(result)
     except Exception as e:
-        logger.info(str(e))
+        logger.error(str(e))
     logger.info("stop mysql intance end.")
 
 def umount_dev(name,s1):
