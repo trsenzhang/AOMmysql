@@ -1,0 +1,1 @@
+/usr/local/python37/bin/python preDBcreate.py --source_pwd='handpay76!' --target_pwd='handpay76!'
