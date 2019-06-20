@@ -53,7 +53,7 @@ DEFINE_string('source_dev', '/dev/mapper/vg_mysql-lv_mysql', 'source db dev.')
 DEFINE_string('snap_dev', '/dev/mapper/vg_mysql-mysqllvsnap', 'snap db dev.')
 
 
-DEFINE_string('db_host', '127.0.0.1', 'source and target database host ip address')
+DEFINE_string('db_host', 'localhost', 'source and target database host ip address')
 
 
 MYSQL_SHOW_SLAVE_STATUS  = 'SHOW SLAVE STATUS;'
