@@ -238,38 +238,38 @@ def main():
     logger.info('mysqld start finished.')
     
     
-    r = get_slave_status()
-    print('-----------%s' % r)
-    #start_slave('source')
-    
-    
-    
-    
-    
-    #start target db and reset slave
-    start_mysql('my_snap.cnf','target')
-    stop_slave('target')
-    reset_slave()
-    
-    
-    #start source io_thread
-    start_slave('source')
-    
-    
-    
-    
-    '''
-    r = get_slave_status()
-    
-    if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
-        #start snap db
-        pass
-    else:
-        logger.info("The source db error.")
-    '''
-    
-    
+    gss = get_slave_status()
+    if gss is not None:
         
+        start_slave('source')
+        logger.info('starting source db slave thread finished')
+    else:
+        logger.info('Not slave thread.')
+    
+    
+    if gss is not None:
+    #start target db and reset slave
+        r = get_slave_status()
+        
+        if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
+            #start snap db
+            
+            start_mysql('my_snap.cnf','target')
+            stop_slave('target')
+            reset_slave()
+            logger.info('starting snap db finished.')
+        else:
+            logger.info("The source db IO or SQL is not running.")
+    
+    else:
+        logger.info('starting snap db.')
+        start_mysql('my_snap.cnf','target')
+        stop_slave('target')
+        reset_slave()
+        logger.info('starting snap db finished.')
+        
+        if gss is not None:
+            start_slave('source')            
     
 
 if __name__ == '__main__':
