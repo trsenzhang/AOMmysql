@@ -189,6 +189,10 @@ def main():
         
         stop_mysql('mysql',FLAGS.source_user,FLAGS.source_pwd)
         
+        logger.info('waiting mysqld stop.')
+        time.sleep(10)
+        logger.info('mysqld stop finished.')
+        
         logger.info("finished close source db.")
     else:
         logger.info("The source db not running.")
@@ -229,14 +233,19 @@ def main():
     #start source db and start slave
     start_mysql('my.cnf','source')
     
-    time.sleep(60)
-    
-    start_slave('source')
-    
-    
+    logger.info('waiting mysqld start.stop')
+    time.sleep(30)
+    logger.info('mysqld start finished.')
     
     
-    '''
+    r = get_slave_status()
+    print('-----------%s' % r)
+    #start_slave('source')
+    
+    
+    
+    
+    
     #start target db and reset slave
     start_mysql('my_snap.cnf','target')
     stop_slave('target')
@@ -245,7 +254,7 @@ def main():
     
     #start source io_thread
     start_slave('source')
-    '''
+    
     
     
     
