@@ -15,7 +15,7 @@
 
 功能运行方式：
 
-1.自动化安装
+一.自动化推送安装部署mysql软件
 
 流程图如下：
 
@@ -31,3 +31,23 @@
 1.在AOMmysql/logs下面产生主干程序的日志信息
 
 2.在目标服务器上/tmp目录下回产生相关日志信息
+
+
+
+二.自动进行MYSQL UAT库部署（基于mysql复制架构及LINUX LVM SNAPSHOT技术）
+
+限制:
+
+1.本脚本只适合linux环境
+
+2.mysql存放的数据目录必须是在LVM上
+
+实际环境部署可参考blog:
+
+http://www.trsenzhangdb.com/?p=1232
+
+运行方式:
+
+sh  	preDBcreate.sh
+
+或者放crontab中，定期，我所在的实际生产中放置crontab中进行定期调度
