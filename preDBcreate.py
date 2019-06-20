@@ -184,7 +184,7 @@ def main():
     
     if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) == '1\n':
         logger.info("close source db.")
-        stop_slave('source')
+        #stop_slave('source')
         
         stop_mysql('mysql',FLAGS.source_user,FLAGS.source_pwd)
         
