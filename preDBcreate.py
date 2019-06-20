@@ -8,6 +8,7 @@ import optparse
 import pymysql
 import platform
 from util.record_logging import RecordLog
+import time
 
 global logger
 
@@ -184,7 +185,7 @@ def main():
     
     if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) == '1\n':
         logger.info("close source db.")
-        #stop_slave('source')
+        stop_slave('source')
         
         stop_mysql('mysql',FLAGS.source_user,FLAGS.source_pwd)
         
@@ -227,6 +228,8 @@ def main():
     
     #start source db and start slave
     start_mysql('my.cnf','source')
+    
+    time.sleep(60)
     
     start_slave('source')
     
