@@ -100,7 +100,7 @@ def stop_slave(flag):
     conn.close()
 
 def start_slave(flag):
-    conn = pymysql.connect(host=FLAGS.db_host, port=int(FLAGS.source_port), user=FLAGS.source_user,passwd=FLAGS.source_pwd)
+    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root',passwd='root')
     sql = "start slave;"
     cursor = conn.cursor()
     cursor.execute(sql)
