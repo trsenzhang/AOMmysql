@@ -248,15 +248,14 @@ def main():
         logger.info('Not slave thread.')
     
     
-    gss2 = get_slave_status('target')
-    
     if gss is not None:
     #start target db and reset slave
         r = get_slave_status('source')
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
             #start snap db
-            
             start_mysql('my_snap.cnf','target')
+            time.sleep(10)
+            gss2 = get_slave_status('target')
             if gss2 is not None:
                 stop_slave('target')
                 reset_slave()
@@ -267,6 +266,8 @@ def main():
     else:
         logger.info('starting snap db.')
         start_mysql('my_snap.cnf','target')
+        time.sleep(10)
+        gss2 = get_slave_status('target')
         if gss2 is not None:
             stop_slave('target')
             reset_slave()
