@@ -71,9 +71,15 @@ def ParseArgs(argv):
 def get_conn(flag):
     
     if flag == 'source':
-        return pymysql.connect(host=FLAGS.db_host, port=int(FLAGS.source_port), user=FLAGS.source_user,passwd=FLAGS.source_pwd)
+        try:
+            return pymysql.connect(host=FLAGS.db_host, port=int(FLAGS.source_port), user=FLAGS.source_user,passwd=FLAGS.source_pwd)
+        except Exception as e:
+            print(str(e))
     elif flag == 'target':
-        return pymysql.connect(host=FLAGS.db_host, port=int(FLAGS.target_port), user=FLAGS.target_user,passwd=FLAGS.target_pwd)
+        try:
+            return pymysql.connect(host=FLAGS.db_host, port=int(FLAGS.target_port), user=FLAGS.target_user,passwd=FLAGS.target_pwd)
+        except Exception as e:
+            print(str(e))
     else:
         exit(1)
         
@@ -91,7 +97,7 @@ def stop_slave(flag):
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
-    #conn.close()
+    conn.close()
 
 def start_slave(flag):
     conn = get_conn(flag)
@@ -99,7 +105,7 @@ def start_slave(flag):
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
-    #conn.close()
+    conn.close()
 
 def reset_slave():
     conn = get_conn('target')
@@ -107,7 +113,7 @@ def reset_slave():
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
-    #conn.close()
+    conn.close()
 
 def stop_mysql(socket,user,pwd):
     logger.info("stop mysql intance.")
