@@ -46,14 +46,14 @@ DEFINE_string('db_base','/usr/local/mysql','mysql soft directory')
 DEFINE_string('source_user', 'root', 'Manage source database mysql account')
 DEFINE_string('target_user', 'root', 'Manage target database mysql account')
 
-DEFINE_string('source_pwd', 'null', 'Manage source database mysql password')
-DEFINE_string('target_pwd', 'null', 'Manage target database mysql password')
+DEFINE_string('source_pwd','null','Manage source database mysql password')
+DEFINE_string('target_pwd','null','Manage target database mysql password')
 
-DEFINE_string('source_dev', '/dev/mapper/vg_mysql-lv_mysql', 'source db dev.')
-DEFINE_string('snap_dev', '/dev/mapper/vg_mysql-mysqllvsnap', 'snap db dev.')
+DEFINE_string('source_dev','/dev/mapper/vg_mysql-lv_mysql','source db dev.')
+DEFINE_string('snap_dev','/dev/mapper/vg_mysql-mysqllvsnap','snap db dev.')
 
 
-DEFINE_string('db_host', 'localhost', 'source and target database host ip address')
+DEFINE_string('db_host','127.0.0.1','source and target database host ip address')
 
 
 MYSQL_SHOW_SLAVE_STATUS  = 'SHOW SLAVE STATUS;'
@@ -91,7 +91,7 @@ def stop_slave(flag):
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
-    conn.close()
+    #conn.close()
 
 def start_slave(flag):
     conn = get_conn(flag)
@@ -99,7 +99,7 @@ def start_slave(flag):
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
-    conn.close()
+    #conn.close()
 
 def reset_slave():
     conn = get_conn('target')
@@ -107,7 +107,7 @@ def reset_slave():
     cursor = conn.cursor()
     cursor.execute(sql)
     cursor.close()
-    conn.close()
+    #conn.close()
 
 def stop_mysql(socket,user,pwd):
     logger.info("stop mysql intance.")
