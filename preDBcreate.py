@@ -100,7 +100,7 @@ def stop_slave(flag):
     conn.close()
 
 def start_slave(flag):
-    conn = pymysql.connect(host='127.0.0.1', port=3306, user='root',passwd='root')
+    conn = get_conn(flag)
     sql = "start slave;"
     cursor = conn.cursor()
     cursor.execute(sql)
@@ -233,7 +233,7 @@ def main():
     
     
     
-    
+    '''
     #start target db and reset slave
     start_mysql('my_snap.cnf','target')
     stop_slave('target')
@@ -242,7 +242,7 @@ def main():
     
     #start source io_thread
     start_slave('source')
-    
+    '''
     
     
     
