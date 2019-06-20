@@ -15,7 +15,7 @@
 
 功能运行方式：
 
-一.自动化推送安装部署mysql软件
+一.自动化推送安装部署mysql软件 (主体逻辑autoInstall.py)
 
 流程图如下：
 
@@ -34,13 +34,17 @@
 
 
 
-二.自动进行MYSQL UAT库部署（基于mysql复制架构及LINUX LVM SNAPSHOT技术）
+二.自动进行MYSQL UAT库部署（主体逻辑preDBcreate.py）
 
 限制:
 
 1.本脚本只适合linux环境
 
 2.mysql存放的数据目录必须是在LVM上
+
+3.基于mysql复制架构及LINUX LVM SNAPSHOT技术
+
+4.一些端口信息已经限制
 
 实际环境部署可参考blog:
 
@@ -51,3 +55,8 @@ http://www.trsenzhangdb.com/?p=1232
 sh  	preDBcreate.sh
 
 或者放crontab中，定期，我所在的实际生产中放置crontab中进行定期调度
+
+
+
+
+代码问题：请联系QQ:736421094 ,并注明疑问
