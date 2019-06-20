@@ -84,8 +84,8 @@ def get_conn(flag):
     else:
         exit(1)
         
-def get_slave_status():
-    conn = get_conn('source')
+def get_slave_status(flag):
+    conn = get_conn(flag)
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(MYSQL_SHOW_SLAVE_STATUS)
     result = cursor.fetchone()
@@ -211,6 +211,7 @@ def main():
         if str(os.popen("ps -ef |grep 'my_snap.cnf'|grep -v grep|wc -l").read()) == '1\n':
             logger.info("close target db.")
             stop_mysql('mysql3307',FLAGS.target_user,FLAGS.target_pwd)
+            time.sleep(10)
             logger.info("finished close target db instance.")
         else:
             logger.info("the target db not running.")
@@ -238,7 +239,7 @@ def main():
     logger.info('mysqld start finished.')
     
     
-    gss = get_slave_status()
+    gss = get_slave_status('source')
     if gss is not None:
         
         start_slave('source')
@@ -247,16 +248,18 @@ def main():
         logger.info('Not slave thread.')
     
     
+    gss2 = get_slave_status('target')
+    
     if gss is not None:
     #start target db and reset slave
-        r = get_slave_status()
-        
+        r = get_slave_status('source')
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
             #start snap db
             
             start_mysql('my_snap.cnf','target')
-            stop_slave('target')
-            reset_slave()
+            if gss2 is not None:
+                stop_slave('target')
+                reset_slave()
             logger.info('starting snap db finished.')
         else:
             logger.info("The source db IO or SQL is not running.")
@@ -264,8 +267,9 @@ def main():
     else:
         logger.info('starting snap db.')
         start_mysql('my_snap.cnf','target')
-        stop_slave('target')
-        reset_slave()
+        if gss2 is not None:
+            stop_slave('target')
+            reset_slave()
         logger.info('starting snap db finished.')
         
         if gss is not None:
