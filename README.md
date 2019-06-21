@@ -7,9 +7,21 @@
 
   QQ邮箱：736421094@qq.com
   
+  
+
+  
 要求：
 
 1.要求运行python的版本在3.x
+
+环境配置
+wget https://www.python.org/ftp/3.7.0/Python-3.7.0.tgz
+
+yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel gcc make
+
+./configure --prefix=/opt/python --enable-optimizations
+
+make && make install 
 
 2.测试中安装的mysql服务器的python环境2.7.x可通过
 
