@@ -271,10 +271,10 @@ def main():
         if gss2 is not None:
             stop_slave('target')
             reset_slave()
-        logger.info('starting snap db finished.')
+        logger.info('starting snap db finished.')       
         
-        if gss is not None:
-            start_slave('source')            
+    if gss is not None:
+        start_slave('source')            
     
 
 if __name__ == '__main__':
