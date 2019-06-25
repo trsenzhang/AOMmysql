@@ -144,7 +144,7 @@ class singleReplCheck(object):
         #pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
        
         with os.popen(do_getlog) as p:
-            print(p.readline())
+            print(p.read())
         pk_value=1
         print ("pk_value : %s" % pk_value)
         sql = repairSql_1032(db_table, pk_value, pk_seq)
