@@ -225,7 +225,7 @@ def main():
         conn = get_conn()
     except Exception as e:
         print('Can\'t connect to mysql %s:%s ' %(FLAGS.host,FLAGS.port))
-        os.exit(0)
+        sys.exit(0)
         
     
     r = get_slave_status(conn)
@@ -235,7 +235,7 @@ def main():
         if (r['Seconds_Behind_Master'] > 0):
             print(r['Seconds_Behind_Master'])            
         conn.close()
-        os.exit(0) 
+        sys.exit(0) 
     
     while(1):   
         r = get_slave_status(conn)
