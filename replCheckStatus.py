@@ -154,6 +154,7 @@ class singleReplCheck(object):
         if (c > '1'): 
             print('opt multi row 1032')
             p=os.popen(do_getlog).read()
+            pk_value=1
         else:
             print('opt 1 row 1032')
             pk_value = os.popen(do_getlog2).readlines()[0].split("=",2)[1].rstrip() 
