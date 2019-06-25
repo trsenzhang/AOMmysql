@@ -81,7 +81,7 @@ def get_rpl_mode(conn):
     cursor = conn.cursor()
     cursor.execute(GTID_MODE)
     r = cursor.fetchone()
-    logger.info('get_rpl_mode r -> %s' % r)
+    print('get_rpl_mode r -> %s' % r)
     if (r[0] == "ON"):
         return 1
     else:
@@ -189,22 +189,22 @@ def get_slave_status(conn):
 
 def main():
     new_argv = ParseArgs(sys.argv[1:])
-    logger.info(new_argv)
-    logger.info(FLAGS)
+    print(new_argv)
+    print(FLAGS)
     
     try:
         conn = get_conn()
     except Exception as e:
-        logger.info('Can\'t connect to mysql %s:%s ' %(FLAGS.db_host,FLAGS.db_port))
+        print('Can\'t connect to mysql %s:%s ' %(FLAGS.db_host,FLAGS.db_port))
         os.exit(0)
         
     
     r = get_slave_status(conn)
     
     if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
-        logger.info("Rpl Ok")
+        print("Rpl Ok")
         if (r['Seconds_Behind_Master'] > 0):
-            logger.info(r['Seconds_Behind_Master'])            
+            print(r['Seconds_Behind_Master'])            
         conn.close()
         os.exit(0) 
     
@@ -212,8 +212,8 @@ def main():
         r = get_slave_status(conn)
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
             rpl_mode = get_rpl_mode(conn)
-            logger.info("rpl_mode %s ") % (rpl_mode)
-            logger.info(r['Last_Errno'])
+            print("rpl_mode %s ") % (rpl_mode)
+            print(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
                 r1062 = singleReplCheck().handler_1062(r, rpl_mode)
                 print('1062 error finished. %s') % r1062
