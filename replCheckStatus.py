@@ -9,7 +9,7 @@ import sys
 import os
 import re
 import optparse
-import pymysql
+import pymysql,commands
 import platform
 from util.record_logging import RecordLog
 
@@ -143,10 +143,9 @@ class singleReplCheck(object):
        
         #pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
        
-        with os.popen(do_getlog) as p:
-            ss=p.read()
-        p.close()
-        print(ss)
+        (status,output)=commands.getstatusoutput(do_getlog)
+        print(status)
+        print(output)
         
         pk_value=1
         print ("pk_value : %s" % pk_value)
