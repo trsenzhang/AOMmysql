@@ -151,6 +151,7 @@ class singleReplCheck(object):
        
         do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name,pk_seq)
+        
         '''       
         c=os.popen(gfld_c).readlines()[0]
         print('c: %s' % c)
