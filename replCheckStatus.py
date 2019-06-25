@@ -29,7 +29,7 @@ com_mysqlbinlog = "/usr/local/mysql/bin/mysqlbinlog"
 r1062 = r"Could not execute Write_rows event on table (.*); Duplicate entry '(.*)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
 u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in (.*), Error_code: 1032; handler error HA_ERR_KEY_NOT_FOUND; the event's master log (.*), end_log_pos (\d+)"
 
-#GET_FROM_LOG="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |grep @%s|head -n 1"
+GET_FROM_LOG2="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |grep @%s|head -n 1"
 GET_FROM_LOG="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |egrep '###'"
 GET_FROM_LOG_DML_COUNT="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |egrep '### WHERE' |wc -l"
 
@@ -147,18 +147,17 @@ class singleReplCheck(object):
         gfld_c = GET_FROM_LOG_DML_COUNT % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
        
         do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
+        do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name,pk_seq)
        
-        #pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
         c=os.popen(gfld_c).readlines()[0]
-        print(c,type(c))
+        print('c: %s' % c)
+        if (c > '1'): 
+            print('opt multi row 1032')
+            p=os.popen(do_getlog).read()
+        else:
+            print('opt 1 row 1032')
+            pk_value = os.popen(do_getlog2).readlines()[0].split("=",2)[1].rstrip() 
         
-        
-        p=os.popen(do_getlog).readlines()
-        print(p)
-        
-        
-        
-        pk_value=1
         print ("pk_value : %s" % pk_value)
         sql = repairSql_1032(db_table, pk_value, pk_seq)
         print("sql : %s" % sql)
