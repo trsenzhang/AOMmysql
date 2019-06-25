@@ -1,6 +1,10 @@
 #/usr/bin/python
 
 
+"""
+1.无法修复一个事务中有多个DML语句的修复
+"""
+
 import sys
 import os
 import re
@@ -125,7 +129,6 @@ class singleReplCheck(object):
     @staticmethod
     def handler_1032(r, rpl):
         #u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in (.*), Error_code: 1032; handler error HA_ERR_KEY_NOT_FOUND; the event's master log (.*), end_log_pos (\d+)"
-
         print (r['Last_SQL_Error'])
         p = re.compile(u1032)
         m = p.search(r['Last_SQL_Error'])
@@ -137,11 +140,10 @@ class singleReplCheck(object):
         pk_seq = get_tb_pk(db_table)[1]   
         print ("pk_seq : %s" % pk_seq)
         do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),  log_file_name,pk_seq)
-        print("do_getlog : %s"  % do_getlog)
-        print(os.popen(do_getlog))
-        print(os.popen(do_getlog).readlines()[0])
-        print(os.popen(do_getlog).readlines()[0].split("=",2)[1])
         pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
+        
+        print(os.popen(do_getlog).readlines()[0].split("=",2))
+        
         print ("pk_value : %s" % pk_value)
         sql = repairSql_1032(db_table, pk_value, pk_seq)
         print("sql : %s" % sql)
