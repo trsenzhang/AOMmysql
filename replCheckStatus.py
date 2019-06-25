@@ -144,9 +144,9 @@ class singleReplCheck(object):
         log_start_position = r['Exec_Master_Log_Pos']
         pk_seq = get_tb_pk(db_table)[1]   
         print ("pk_seq : %s" % pk_seq)
-        gfld_c = GET_FROM_LOG_DML_COUNT % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name,pk_seq)
+        gfld_c = GET_FROM_LOG_DML_COUNT % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
        
-        do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name,pk_seq)
+        do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
        
         #pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
         c=os.popen(gfld_c).readlines()[0]
