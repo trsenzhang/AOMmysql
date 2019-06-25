@@ -94,7 +94,8 @@ def get_only_status(conn):
 class parallelReplCheck(object):
     pass
 
-class singleReplCheck(object):  
+class singleReplCheck(object): 
+    @staticmethod
     def handler_1062(r,rpl):
         logger.info(r['Last_SQL_Error'])
         m = re.search(r1062,r['Last_SQL_Error'])
@@ -212,10 +213,10 @@ def main():
         r = get_slave_status(conn)
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
             rpl_mode = get_rpl_mode(conn)
-            print("rpl_mode %s ") % (rpl_mode)
+            print("rpl_mode %s " % rpl_mode)
             print(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
-                r1062 = singleReplCheck().handler_1062(r, rpl_mode)
+                r1062 = singleReplCheck.handler_1062(r, rpl_mode)
                 print('1062 error finished. %s') % r1062
                 #
             if ( r['Last_Errno'] == 1032 ):
