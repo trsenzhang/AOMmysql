@@ -149,8 +149,10 @@ class singleReplCheck(object):
         do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
        
         #pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
-        c=os.popen(gfld_c).readlines()
-        print(c)
+        c=os.popen(gfld_c).readlines()[0]
+        print(c,type(c))
+        
+        
         p=os.popen(do_getlog).readlines()
         print(p)
         
