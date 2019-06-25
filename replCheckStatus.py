@@ -132,7 +132,8 @@ class singleReplCheck(object):
         cursor.execute("start slave sql_thread")
         cursor.close()
         conn.commit()
-        conn.close() 
+        conn.close()
+        return(1)
     
         
     @staticmethod
@@ -175,6 +176,7 @@ class singleReplCheck(object):
         conn.commit()
         cursor.close()
         conn.close()
+        return(1)
         
     
 def chk_master_slave_gtid():
