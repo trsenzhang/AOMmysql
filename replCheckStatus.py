@@ -133,13 +133,14 @@ class singleReplCheck(object):
         log_file_name = m.group(4)
         log_stop_position = m.group(5)
         log_start_position = r['Exec_Master_Log_Pos']
-        pk_seq = get_tb_pk(db_table)[1]    
+        pk_seq = get_tb_pk(db_table)[1]   
+        print ("pk_seq : %s" % pk_seq)
         do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),  log_file_name,pk_seq)
-        print(do_getlog)
+        print("do_getlog : %s"  % do_getlog)
         pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
-        print (pk_value)
-        sql = mk_tb_replace(db_table, pk_value, pk_seq)
-        
+        print ("pk_value : %s" % pk_value)
+        sql = repairSql_1032(db_table, pk_value, pk_seq)
+        print("sql : %s" % sql)
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute("set session sql_log_bin=0;")
@@ -156,7 +157,7 @@ def chk_master_slave_gtid():
     pass
     
 
-def mk_tb_replace(db_table, pk_value, pk_seq):
+def repairSql_1032(db_table, pk_value, pk_seq):
     db, tb_name = db_table.split(".")
     r = "replace into %s.%s "%(db,tb_name)
     
