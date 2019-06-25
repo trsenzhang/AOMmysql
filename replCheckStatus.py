@@ -92,7 +92,6 @@ def get_only_status(conn):
     cursor = conn.cursor()
     cursor.execute()
     
-def
 
 class parallelReplCheck(object):
     pass
