@@ -102,7 +102,10 @@ def get_rpl_mode(conn):
 def get_only_status(conn):
     cursor = conn.cursor()
     cursor.execute()
-    
+
+
+def optMulitMDL():
+        
 
 class parallelReplCheck(object):
     pass
