@@ -3,7 +3,7 @@
 
 """
 限制条件：
-1.无法修复一个事务中有多个DML语句导致的1032和1062
+1.无法修复一个事务中包含多个DML语句导致的1032和1062
 2.无法修复复合主键导致的1032和1062
 3.无在修复只读slave上1032和1062
 4.无法修复并行复制slave上1032和1062
@@ -132,8 +132,7 @@ class singleReplCheck(object):
         cursor.execute("start slave sql_thread")
         cursor.close()
         conn.commit()
-        conn.close()
-        return 0  
+        conn.close() 
     
         
     @staticmethod
@@ -176,7 +175,6 @@ class singleReplCheck(object):
         conn.commit()
         cursor.close()
         conn.close()
-        return 0
         
     
 def chk_master_slave_gtid():
