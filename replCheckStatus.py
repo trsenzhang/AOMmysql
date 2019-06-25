@@ -31,7 +31,7 @@ u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in 
 
 #GET_FROM_LOG="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |grep @%s|head -n 1"
 GET_FROM_LOG="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |egrep '###'"
-GET_FROM_LOG_DML_COUNT="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |egrep '###' |wc -l"
+GET_FROM_LOG_DML_COUNT="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |egrep '### WHERE' |wc -l"
 
 FLAGS = optparse.Values()
 parser = optparse.OptionParser()
