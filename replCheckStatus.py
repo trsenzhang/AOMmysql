@@ -120,7 +120,7 @@ class singleReplCheck(object):
         return 0  
     
         
-    
+    @staticmethod
     def handler_1032(r, rpl):
         print (r['Last_SQL_Error'])
         p = re.compile(u1032)
@@ -217,7 +217,7 @@ def main():
             print(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
                 r1062 = singleReplCheck.handler_1062(r, rpl_mode)
-                print('1062 error finished. %s') % r1062
+                print('1062 error finished. %s' % r1062)
                 #
             if ( r['Last_Errno'] == 1032 ):
                 #r1032 = singleReplCheck().handler_1032(r, rpl_mode)
