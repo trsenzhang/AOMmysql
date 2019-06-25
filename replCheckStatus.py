@@ -1,5 +1,7 @@
 #/usr/bin/python
 
+
+
 import sys
 import os
 import re
@@ -15,7 +17,7 @@ MYSQL_SHOW_SLAVE_STATUS     = 'SHOW SLAVE STATUS;'
 GTID_MODE = "select @@gtid_mode;"
 com_mysqlbinlog = "/usr/local/mysql/bin/mysqlbinlog"
 
-r1062 = r"Could not execute Write_rows event on table (.*); Duplicate entry '(\d+)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
+r1062 = r"Could not execute Write_rows event on table (.*); Duplicate entry '(.*)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
 u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in (.*), Error_code: 1032; handler error HA_ERR_KEY_NOT_FOUND; the event's master log (.*), end_log_pos (\d+)"
 
 GET_FROM_LOG="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |grep @%s|head -n 1"
@@ -47,10 +49,10 @@ def DEFINE_integer(name, default, description, short_name=None):
     parser.set_default(name, default)
     setattr(FLAGS, name, default)
 
-DEFINE_integer('db_port', '3306', 'database port ')
-DEFINE_string('db_user', 'root', 'connection mysql user')
-DEFINE_string('db_password', 'root', 'connection mysql password')
-DEFINE_string('db_host', '127.0.0.1', 'connection mysql ip address')
+DEFINE_integer('port', '3306', 'The slave of occur error database port ')
+DEFINE_string('user', 'root', 'The slave of occur error mysql user')
+DEFINE_string('password', 'root', 'The slave of occur error mysql password')
+DEFINE_string('host', '127.0.0.1', 'The slave of occur error ip address')
 
 
 def ShowUsage():
@@ -63,7 +65,7 @@ def ParseArgs(argv):
     return new_argv
 
 def get_conn():
-    return pymysql.connect(host=FLAGS.db_host, port=int(FLAGS.db_port), user=FLAGS.db_user,passwd=FLAGS.db_password)
+    return pymysql.connect(host=FLAGS.host, port=int(FLAGS.port), user=FLAGS.user,passwd=FLAGS.password)
 
 def get_tb_pk(db_table):
     db, tb = db_table.split('.')
@@ -122,6 +124,8 @@ class singleReplCheck(object):
         
     @staticmethod
     def handler_1032(r, rpl):
+        #u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in (.*), Error_code: 1032; handler error HA_ERR_KEY_NOT_FOUND; the event's master log (.*), end_log_pos (\d+)"
+
         print (r['Last_SQL_Error'])
         p = re.compile(u1032)
         m = p.search(r['Last_SQL_Error'])
@@ -131,7 +135,7 @@ class singleReplCheck(object):
         log_stop_position = m.group(5)
         log_start_position = r['Exec_Master_Log_Pos']
         pk_seq = get_tb_pk(db_table)[1]    
-        do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.db_user,FLAGS.db_password, int(log_start_position), int(log_stop_position),  log_file_name,pk_seq)
+        do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),  log_file_name,pk_seq)
         pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
         print (pk_value)
         sql = mk_tb_replace(db_table, pk_value, pk_seq)
@@ -196,7 +200,7 @@ def main():
     try:
         conn = get_conn()
     except Exception as e:
-        print('Can\'t connect to mysql %s:%s ' %(FLAGS.db_host,FLAGS.db_port))
+        print('Can\'t connect to mysql %s:%s ' %(FLAGS.host,FLAGS.port))
         os.exit(0)
         
     
@@ -220,8 +224,8 @@ def main():
                 print('1062 error finished. %s' % r1062)
                 #
             if ( r['Last_Errno'] == 1032 ):
-                #r1032 = singleReplCheck().handler_1032(r, rpl_mode)
-                #print('1062 error finished. %s') % r1032
+                r1032 = singleReplCheck.handler_1032(r, rpl_mode)
+                print('1062 error finished. %s' % r1032)
                 pass
         else:
             break
