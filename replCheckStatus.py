@@ -12,7 +12,7 @@ global logger
 
 
 MYSQL_SHOW_SLAVE_STATUS     = 'SHOW SLAVE STATUS;'
-GTID_MODE = "select @@gtid_mode"
+GTID_MODE = "select @@gtid_mode;"
 com_mysqlbinlog = "/usr/local/mysql/bin/mysqlbinlog"
 
 r1062 = r"Could not execute Write_rows event on table (.*); Duplicate entry '(\d+)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
@@ -47,10 +47,10 @@ def DEFINE_integer(name, default, description, short_name=None):
     parser.set_default(name, default)
     setattr(FLAGS, name, default)
 
-DEFINE_integer('db_port', '3306', 'DB port : 3306')
-DEFINE_string('db_user', 'wubx', 'DB user ')
-DEFINE_string('db_password', '', 'DB password')
-DEFINE_string('db_host', '127.0.0.1', 'DB  Hostname')
+DEFINE_integer('db_port', '3306', 'database port ')
+DEFINE_string('db_user', 'root', 'connection mysql user')
+DEFINE_string('db_password', 'handpay76!', 'connection mysql password')
+DEFINE_string('db_host', '127.0.0.1', 'connection mysql ip address')
 
 
 def ShowUsage():
@@ -77,27 +77,27 @@ def get_tb_pk(db_table):
     return r
 
 
-
-
 def get_rpl_mode(conn):
     cursor = conn.cursor()
     cursor.execute(GTID_MODE)
     r = cursor.fetchone()
-    print(r)
-    
+    logger.info('get_rpl_mode r -> %s' % r)
     if (r[0] == "ON"):
         return 1
     else:
         return 0
+
+def get_only_status(conn):
+    cursor = conn.cursor()
+    cursor.execute()
     
 class parallelReplCheck(object):
     pass
 
 class singleReplCheck(object):  
     def handler_1062(r,rpl):
-        print (r['Last_SQL_Error'])
-        p = re.compile(r1062)
-        m = p.search(r['Last_SQL_Error'])
+        logger.info(r['Last_SQL_Error'])
+        m = re.search(r1062,r['Last_SQL_Error'])
         db_table = m.group(1)
         pk_v = m.group(2)
         conn = get_conn()
@@ -105,9 +105,13 @@ class singleReplCheck(object):
         
         sql = "delete from %s where %s=%s" % (db_table, pk_col, pk_v)
         cursor = conn.cursor()
+        #cursor.execute("set global read_only=0;")
+        #cursor.execute("set global super_read_only=0;")
         cursor.execute("set session sql_log_bin=0;")
         cursor.execute(sql)
         #cursor.execute("set  session sql_log_bin=1")
+        #cursor.execute("set global read_only=1;")
+        #cursor.execute("set global super_read_only=1;")
         cursor.execute("start slave sql_thread")
         cursor.close()
         conn.commit()
@@ -185,41 +189,46 @@ def get_slave_status(conn):
 
 def main():
     new_argv = ParseArgs(sys.argv[1:])
-    print(new_argv)
-    print (FLAGS)
-    conn = get_conn()
+    logger.info(new_argv)
+    logger.info(FLAGS)
     
+    try:
+        conn = get_conn()
+    except Exception as e:
+        logger.info('Can\'t connect to mysql %s:%s ' %(FLAGS.db_host,FLAGS.db_port))
+        os.exit(0)
+        
     
     r = get_slave_status(conn)
     
     if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
-        print ("Rpl Ok")
+        logger.info("Rpl Ok")
         if (r['Seconds_Behind_Master'] > 0):
-            print (r['Seconds_Behind_Master'])
-            
+            logger.info(r['Seconds_Behind_Master'])            
         conn.close()
-        exit(0) 
+        os.exit(0) 
     
-    while( 1 ):   
+    while(1):   
         r = get_slave_status(conn)
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
             rpl_mode = get_rpl_mode(conn)
-            print ("rpl_mode %s ") % (rpl_mode)
-            print (r['Last_Errno'])
+            logger.info("rpl_mode %s ") % (rpl_mode)
+            logger.info(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
                 r1062 = singleReplCheck().handler_1062(r, rpl_mode)
                 print('1062 error finished. %s') % r1062
                 #
             if ( r['Last_Errno'] == 1032 ):
-                r1032 = singleReplCheck().handler_1032(r, rpl_mode)
-                print('1062 error finished. %s') % r1032
+                #r1032 = singleReplCheck().handler_1032(r, rpl_mode)
+                #print('1062 error finished. %s') % r1032
+                pass
         else:
             break
                       
     conn.close()
 
 if __name__ == '__main__':
-        logger = RecordLog('auto_check_repl_status').log()
+        logger = RecordLog('auto_check_repl_status_repair').log()
         
         if(platform.system()=='Linux'):
             logger.info('The platform check pass.')
