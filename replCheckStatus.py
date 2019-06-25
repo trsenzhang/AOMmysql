@@ -49,7 +49,7 @@ def DEFINE_integer(name, default, description, short_name=None):
 
 DEFINE_integer('db_port', '3306', 'database port ')
 DEFINE_string('db_user', 'root', 'connection mysql user')
-DEFINE_string('db_password', 'handpay76!', 'connection mysql password')
+DEFINE_string('db_password', 'root', 'connection mysql password')
 DEFINE_string('db_host', '127.0.0.1', 'connection mysql ip address')
 
 
