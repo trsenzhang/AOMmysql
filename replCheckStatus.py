@@ -7,7 +7,7 @@
 2.无法修复复合主键导致的1032和1062
 3.无在修复只读slave上1032和1062
 4.无法修复并行复制slave上1032和1062
-5.无法修复
+5.
 
 """
 
@@ -133,7 +133,7 @@ class singleReplCheck(object):
         cursor.close()
         conn.commit()
         conn.close()
-        return(1)
+        return(0)
     
         
     @staticmethod
@@ -176,7 +176,7 @@ class singleReplCheck(object):
         conn.commit()
         cursor.close()
         conn.close()
-        return(1)
+        return(0)
         
     
 def chk_master_slave_gtid():
