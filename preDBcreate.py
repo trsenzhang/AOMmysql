@@ -262,6 +262,7 @@ def main():
             logger.info('starting snap db finished.')
         else:
             logger.info("The source db IO or SQL is not running.")
+            sys.exit(0)
     
     else:
         logger.info('starting snap db.')
