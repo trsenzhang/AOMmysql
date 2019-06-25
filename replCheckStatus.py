@@ -105,10 +105,10 @@ def get_only_status(conn):
 
 
 def optMulitMDL():
-        
+        pass
 
 class parallelReplCheck(object):
-    pass
+        pass
 
 class singleReplCheck(object): 
     @staticmethod
