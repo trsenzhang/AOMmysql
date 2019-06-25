@@ -141,11 +141,11 @@ class singleReplCheck(object):
         print ("pk_seq : %s" % pk_seq)
         do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),  log_file_name,pk_seq)
        
-        pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
+        #pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
        
         with os.popen(do_getlog) as p:
             print(p.readline())
-        
+        pk_value=1
         print ("pk_value : %s" % pk_value)
         sql = repairSql_1032(db_table, pk_value, pk_seq)
         print("sql : %s" % sql)
