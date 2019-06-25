@@ -1,7 +1,6 @@
 #/usr/bin/python
 
 
-
 import sys
 import os
 import re
@@ -130,12 +129,13 @@ class singleReplCheck(object):
         p = re.compile(u1032)
         m = p.search(r['Last_SQL_Error'])
         db_table = m.group(2)
-        tb_name = m.group(3)
+        #tb_name = m.group(3)
         log_file_name = m.group(4)
         log_stop_position = m.group(5)
         log_start_position = r['Exec_Master_Log_Pos']
         pk_seq = get_tb_pk(db_table)[1]    
         do_getlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),  log_file_name,pk_seq)
+        print(do_getlog)
         pk_value = os.popen(do_getlog).readlines()[0].split("=",2)[1].rstrip()
         print (pk_value)
         sql = mk_tb_replace(db_table, pk_value, pk_seq)
@@ -221,12 +221,11 @@ def main():
             print(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
                 r1062 = singleReplCheck.handler_1062(r, rpl_mode)
-                print('1062 error finished. %s' % r1062)
+                print('repaired 1062 error finished, error row:%s' % r1062)
                 #
             if ( r['Last_Errno'] == 1032 ):
                 r1032 = singleReplCheck.handler_1032(r, rpl_mode)
-                print('1062 error finished. %s' % r1032)
-                pass
+                print('repaired 1032 error finished, error row: %s' % r1032)
         else:
             break
                       
