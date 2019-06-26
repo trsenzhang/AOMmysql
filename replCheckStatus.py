@@ -100,9 +100,14 @@ def get_rpl_mode(conn):
         return 0
 
 def get_only_status(conn):
-    cursor = conn.cursor()
-    cursor.execute()
-
+    conn2=get_conn()
+    sql="select @@super_read_only;"
+    cursor = conn2.cursor()
+    cursor.execute(sql)
+    r = cursor.fetchone()
+    print('super_read_ony : %s' % r[0])
+    conn2.close()
+    return r[0]
 
 def optMulitMDL():
         pass
@@ -122,14 +127,18 @@ class singleReplCheck(object):
         
         sql = "delete from %s where %s=%s" % (db_table, pk_col, pk_v)
         cursor = conn.cursor()
-        #cursor.execute("set global read_only=0;")
-        #cursor.execute("set global super_read_only=0;")
+        if str(get_only_status()) == '1':
+            print("super_read_only change to : 0")
+            cursor.execute("set global super_read_only=0;")
+            flag=1
         cursor.execute("set session sql_log_bin=0;")
         cursor.execute(sql)
-        #cursor.execute("set  session sql_log_bin=1")
-        #cursor.execute("set global read_only=1;")
-        #cursor.execute("set global super_read_only=1;")
+        cursor.execute("set  session sql_log_bin=1")
         cursor.execute("start slave sql_thread")
+        if flag == 1:
+            print("super_read_only change to : 1")
+            cursor.execute("set global super_read_only=1;")
+            flag=0
         cursor.close()
         conn.commit()
         conn.close()
