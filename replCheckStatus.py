@@ -241,6 +241,7 @@ def main():
     
     while(1):   
         r = get_slave_status(conn)
+        print('Slave_IO_Running: %s,Slave_SQL_Running:%s' %(r['Slave_IO_Running'],r['Slave_SQL_Running']) )
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
             rpl_mode = get_rpl_mode(conn)
             print("rpl_mode %s " % rpl_mode)
