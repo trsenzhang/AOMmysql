@@ -7,7 +7,7 @@
 2.无法修复复合主键导致的1032和1062
 3.无在修复只读slave上1032和1062
 4.无法修复并行复制slave上1032和1062
-5.
+5.没有记录1062和1032操作前的数据记录
 
 """
 
@@ -119,7 +119,6 @@ class parallelReplCheck(object):
 class singleReplCheck(object): 
     @staticmethod
     def handler_1062(r,rpl):
-        logger.info(r['Last_SQL_Error'])
         m = re.search(r1062,r['Last_SQL_Error'])
         db_table = m.group(1)
         pk_v = m.group(2)
@@ -127,7 +126,7 @@ class singleReplCheck(object):
         tgp=get_tb_pk(db_table)
         pk_col = tgp[0]
         col_type = str(tgp[2][:3])
-        print("col_type:%s" % col_type)
+        logger.info("col_type:%s" % col_type)
         
         
         if col_type == 'int':
@@ -135,14 +134,14 @@ class singleReplCheck(object):
         else:
             sql = "delete from %s where %s='%s'" % (db_table,pk_col,pk_v)
             
-        print("1062sql :%s" % sql)
+        logger.info("1062sql :%s" % sql)
         cursor = conn.cursor()
         cursor.execute(sql)
         cursor.execute("start slave sql_thread")
         cursor.close()
         conn.commit()
         conn.close()
-        return(0)
+        return(1)
     
         
     @staticmethod
@@ -185,7 +184,7 @@ class singleReplCheck(object):
         conn.commit()
         cursor.close()
         conn.close()
-        return(0)
+        return(1)
         
     
 def chk_master_slave_gtid():
@@ -228,10 +227,6 @@ def get_slave_status(conn):
 
 
 def main():
-    new_argv = ParseArgs(sys.argv[1:])
-    print(new_argv)
-    print(FLAGS)
-    
     try:
         conn = get_conn()
     except Exception as e:
@@ -248,22 +243,24 @@ def main():
         conn.close()
         sys.exit(0) 
     
-    if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
-        while(1):
-            r = get_slave_status(conn)
-            print('Slave_IO_Running: %s,Slave_SQL_Running:%s,Last_Errno:%s' %(r['Slave_IO_Running'],r['Slave_SQL_Running'],r['Last_Errno']) )
+    
+    while(1):
+        time.sleep(3)
+        r = get_slave_status(conn)
+        logger.info('Slave_IO_Running: %s,Slave_SQL_Running:%s,Last_Errno:%s' %(r['Slave_IO_Running'],r['Slave_SQL_Running'],r['Last_Errno']) )
+        if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
             rpl_mode = get_rpl_mode(conn)
             print("rpl_mode %s " % rpl_mode)
             print(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
                 r1062 = singleReplCheck.handler_1062(r, rpl_mode)
-                print('repaired 1062 error finished, error row:%s' % r1062)
+                logger.info('repaired 1062 error finished, error row:%s' % r1062)
                 #
-            elif ( r['Last_Errno'] == 1032 ):
+            if ( r['Last_Errno'] == 1032 ):
                 r1032 = singleReplCheck.handler_1032(r, rpl_mode)
-                print('repaired 1032 error finished, error row: %s' % r1032)
-            else:
-                break
+                logger.info('repaired 1032 error finished, error row: %s' % r1032)
+        else:
+            break
     
                       
     conn.close()
@@ -273,6 +270,9 @@ if __name__ == '__main__':
         
         if(platform.system()=='Linux'):
             logger.info('The platform check pass.')
+            new_argv = ParseArgs(sys.argv[1:])
+            print(new_argv)
+            print(FLAGS)
             main()
         else:
             logger.info('The ENV is not linux,waiting coding')
