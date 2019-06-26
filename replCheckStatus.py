@@ -28,6 +28,13 @@ GTID_MODE = "select @@gtid_mode;"
 com_mysqlbinlog = "/usr/local/mysql/bin/mysqlbinlog"
 
 r1062 = r"Could not execute Write_rows event on table (.*); Duplicate entry '(.*)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
+
+'''
+Could not execute Write_rows event on table intrepaydb.t_dpay_third_collect; Row size too large (> 8126). Changing some columns to TEXT or BLOB or using ROW_FORMAT=DYNAMIC or ROW_FORMAT=COMPRESSED may help. In current row format, BLOB prefix of 768 bytes is stored inline., Error_code: 139; Duplicate entry '1906260940571966027' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log mysql-bin.000173, end_log_pos 112185003, Error_code: 1062
+'''
+
+r1062_0 = r"Could not execute Write_rows event on table (.*); Row size too large (.*); Duplicate entry '(.*)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
+
 u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in (.*), Error_code: 1032; handler error HA_ERR_KEY_NOT_FOUND; the event's master log (.*), end_log_pos (\d+)"
 
 GET_FROM_LOG2="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |grep @%s|head -n 1"
@@ -120,8 +127,15 @@ class singleReplCheck(object):
     @staticmethod
     def handler_1062(r,rpl):
         m = re.search(r1062,r['Last_SQL_Error'])
-        db_table = m.group(1)
-        pk_v = m.group(2)
+        
+        if m is not None: 
+            db_table = m.group(1)
+            pk_v = m.group(2)
+        else:
+            m2=re.search(r1062_0,r['Last_SQL_Error'])
+            db_table = m2.group(1)
+            pk_v = m2.group(3)
+            
         conn = get_conn()
         tgp=get_tb_pk(db_table)
         pk_col = tgp[0]
@@ -136,7 +150,11 @@ class singleReplCheck(object):
             
         logger.info("1062sql :%s" % sql)
         cursor = conn.cursor()
-        cursor.execute(sql)
+        try:
+            cursor.execute(sql)
+        except Exception as e:
+            print("1062 excute sql error: %s" % str(e))
+            logger.info("1062 excute sql error: %s" % str(e))
         cursor.execute("start slave sql_thread")
         cursor.close()
         conn.commit()
@@ -245,7 +263,7 @@ def main():
     
     
     while(1):
-        time.sleep(3)
+        time.sleep(1)#延迟1秒查看slave状态，太快，导致状态检查不准确
         r = get_slave_status(conn)
         logger.info('Slave_IO_Running: %s,Slave_SQL_Running:%s,Last_Errno:%s' %(r['Slave_IO_Running'],r['Slave_SQL_Running'],r['Last_Errno']) )
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
