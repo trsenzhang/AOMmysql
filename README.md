@@ -72,6 +72,58 @@ sh  	preDBcreate.sh
 或者放crontab中，定期，我所在的实际生产中放置crontab中进行定期调度
 
 
+三.自动修复复制中常见错误
+
+工具介绍：
+
+2019-06-27添加自动修复1062错误；通过在slave端运行repl.sh即可修复1062错误（在5.7；5.6版本测试均已没有问题）；
+
+本工具依赖mysqlbinlog及pymysql
+
+
+原理：
+
+1.1062错误因主键冲突，所以通过报错信息将重复的主键在slave端删除，然后重新开启sql_thread
+
+
+
+
+要求：
+
+1.binlog必须是row格式
+
+2.GTID是否开启没有做强制要求（实际及测试中的环境都是基于GTID模式）
+
+
+
+限制：
+
+1.暂时只能提供一个事务中只有一条DML操作，并且主键只有一个字段；复合主键暂不支持
+
+2.
+
+
+
+案例中日志信息记录：
+
+....
+2019-06-27 09:54:23.981953 : INFO : col_type:var
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257477619'
+2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
+2019-06-27 09:54:23.981953 : INFO : Slave_IO_Running: Yes,Slave_SQL_Running:No,Last_Errno:1062
+2019-06-27 09:54:23.981953 : INFO : col_type:var
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257477620'
+2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
+2019-06-27 09:54:23.981953 : INFO : Slave_IO_Running: Yes,Slave_SQL_Running:No,Last_Errno:1062
+2019-06-27 09:54:23.981953 : INFO : col_type:var
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257487621'
+2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
+2019-06-27 09:54:23.981953 : INFO : Slave_IO_Running: Yes,Slave_SQL_Running:No,Last_Errno:1062
+2019-06-27 09:54:23.981953 : INFO : col_type:var
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257487622'
+2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
+
+
 
 
 
