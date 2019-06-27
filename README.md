@@ -108,19 +108,33 @@ sh  	preDBcreate.sh
 
 ....
 2019-06-27 09:54:23.981953 : INFO : col_type:var
-2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257477619'
+
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from trsen.trsen where id='1906260946257477619'
+
 2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
+
 2019-06-27 09:54:23.981953 : INFO : Slave_IO_Running: Yes,Slave_SQL_Running:No,Last_Errno:1062
+
 2019-06-27 09:54:23.981953 : INFO : col_type:var
-2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257477620'
+
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from trsen.trsenwhere id='1906260946257477620'
+
 2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
+
 2019-06-27 09:54:23.981953 : INFO : Slave_IO_Running: Yes,Slave_SQL_Running:No,Last_Errno:1062
+
 2019-06-27 09:54:23.981953 : INFO : col_type:var
-2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257487621'
+
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from trsen.trsenwhere id='1906260946257487621'
+
 2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
+
 2019-06-27 09:54:23.981953 : INFO : Slave_IO_Running: Yes,Slave_SQL_Running:No,Last_Errno:1062
+
 2019-06-27 09:54:23.981953 : INFO : col_type:var
-2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from intrepaydb.data_moxie_calls_bill where id='1906260946257487622'
+
+2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from trsen.trsen where id='1906260946257487622'
+
 2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
 
 
