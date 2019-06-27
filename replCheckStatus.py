@@ -261,7 +261,7 @@ def main():
         conn.close()
         sys.exit(0) 
     
-    
+    count = 0
     while(1):
         time.sleep(1)#延迟1秒查看slave状态，太快，导致状态检查不准确
         r = get_slave_status(conn)
@@ -278,7 +278,10 @@ def main():
                 r1032 = singleReplCheck.handler_1032(r, rpl_mode)
                 logger.info('repaired 1032 error finished, error row: %s' % r1032)
         else:
-            break
+            count += 1
+            logger.info('count :%s' % count)
+            if count >=30:
+                break
     
                       
     conn.close()
