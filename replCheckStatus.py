@@ -261,29 +261,27 @@ def main():
         conn.close()
         sys.exit(0) 
     
-    count = 0
+    count = 0 #控制一次循环里status状态因服务器性能问题导致误判的计数器
     while(1):
-        time.sleep(1)#延迟1秒查看slave状态，太快，导致状态检查不准确
+        #time.sleep(1)#延迟1秒查看slave状态，太快，导致状态检查不准确
         r = get_slave_status(conn)
-        logger.info('Slave_IO_Running: %s,Slave_SQL_Running:%s,Last_Errno:%s' %(r['Slave_IO_Running'],r['Slave_SQL_Running'],r['Last_Errno']) )
+        #logger.info('Slave_IO_Running: %s,Slave_SQL_Running:%s,Last_Errno:%s' %(r['Slave_IO_Running'],r['Slave_SQL_Running'],r['Last_Errno']) )
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
             rpl_mode = get_rpl_mode(conn)
             print("rpl_mode %s " % rpl_mode)
             print(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
-                r1062 = singleReplCheck.handler_1062(r, rpl_mode)
-                logger.info('repaired 1062 error finished, error row:%s' % r1062)
+                singleReplCheck.handler_1062(r, rpl_mode)
                 #
             if ( r['Last_Errno'] == 1032 ):
-                r1032 = singleReplCheck.handler_1032(r, rpl_mode)
-                logger.info('repaired 1032 error finished, error row: %s' % r1032)
+               singleReplCheck.handler_1032(r, rpl_mode)
         else:
             count += 1
             logger.info('count :%s' % count)
-            if count >=30:
+            if count >=100000:
                 break
     
-                      
+    logger.info("slave repaired.")                  
     conn.close()
 
 if __name__ == '__main__':
