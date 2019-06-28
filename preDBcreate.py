@@ -89,9 +89,19 @@ def get_slave_status(flag):
     cursor = conn.cursor(pymysql.cursors.DictCursor)
     cursor.execute(MYSQL_SHOW_SLAVE_STATUS)
     result = cursor.fetchone()
+    cursor.close()
+    conn.close()
     return result
 
-      
+def execSQL():
+    conn= get_conn('target')
+    cursor = conn.cursor(pymysql.cursors.DictCursor)
+    cursor.execute('select 1')
+    result = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return result
+
 def stop_slave(flag):
     conn = get_conn(flag)
     sql = "stop slave;"
@@ -182,104 +192,104 @@ def main():
     #close source db and slave thread
     #mysql.sock   
     #mysql3307.sock
-    
     if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) == '1\n':
         logger.info("close source db.")
         stop_slave('source')
-        
         stop_mysql('mysql',FLAGS.source_user,FLAGS.source_pwd)
-        
-        logger.info('waiting mysqld stop.')
-        time.sleep(10)
-        logger.info('mysqld stop finished.')
-        
         logger.info("finished close source db.")
     else:
         logger.info("The source db not running.")
-    #source_dev snap_dev
-    try:
-        umount_dev(FLAGS.source_dev)
-    except Exception as e:
-        logger.error(str(e))
         
-    #remove history snap dev
-
-    if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0\n':
-        logger.info("Not snapshot group, you not remove snapshot group.")
-    else:
-        logger.info("The history snapshot group already exists.")
-        if str(os.popen("ps -ef |grep 'my_snap.cnf'|grep -v grep|wc -l").read()) == '1\n':
-            logger.info("close target db.")
-            stop_mysql('mysql3307',FLAGS.target_user,FLAGS.target_pwd)
-            time.sleep(10)
-            logger.info("finished close target db instance.")
+    #source_dev snap_dev
+    flag = 1
+    count = 0
+    while(flag):
+        time.sleep(3)
+        if str(os.popen("ps -ef |grep 'my.cnf'|grep -v grep|wc -l").read()) != '1\n':
+            try:
+                umount_dev(FLAGS.source_dev)
+            except Exception as e:
+                logger.error(str(e))
+                sys.exit(0)
+            flag = 0
+            logger.info("umount source dev cost time : %ss" % str(count * 3))
         else:
-            logger.info("the target db not running.")
+             flag = 1
+             count += 1
+           
+        if count >100:
+            logger.info('Not close source db instance,umount dev failed,timeout 300s')
+            sys.exit(0)
+            
+    #remove history snap dev
+    try:
+        if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0\n':
+            logger.info("Not snapshot group, you not remove snapshot group.")
+        else:
+            logger.info("The history snapshot group already exists.")
+            if str(os.popen("ps -ef |grep 'my_snap.cnf'|grep -v grep|wc -l").read()) == '1\n':
+                logger.info("close target db.")
+                stop_mysql('mysql3307',FLAGS.target_user,FLAGS.target_pwd)
+                logger.info("finished close target db instance.")
+            else:
+                logger.info("the target db not running.")
+            #
+    except Exception as e:
+        logger.info("stop target db failed. %s" % str(e))
+        sys.exit(0)
         #
         #
-        #
-        umount_dev(FLAGS.snap_dev)
-        remove_snap_dev()
-        logger.info("The history snapshot group was remove.")
+    if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '1\n':
+        try:
+            umount_dev(FLAGS.snap_dev)
+            remove_snap_dev()
+            logger.info("The history snapshot group was remove.")
+        except Exception as e:
+            logger.info("umount and remove target dev failed")
+            sys.exit(0)
     
     #create snap dev and mount 
     #/dev/mapper/vg_mysql-lv_mysql  /dev/mapper/vg_mysql-mysqllvsnap
     #
-    create_snap(1,FLAGS.source_dev)
-    
-    mount_dev(FLAGS.snap_dev,"snap_data")
-    
-    mount_dev(FLAGS.source_dev,"data")
-    
-    #start source db and start slave
-    start_mysql('my.cnf','source')
-    
-    logger.info('waiting mysqld start.stop')
-    time.sleep(30)
-    logger.info('mysqld start finished.')
-    
-    
-    gss = get_slave_status('source')
-    if gss is not None:
+    try:
+        create_snap(300,FLAGS.source_dev)
         
-        start_slave('source')
-        logger.info('starting source db slave thread finished')
-    else:
-        logger.info('Not slave thread.')
-    
-    
-    if gss is not None:
-    #start target db and reset slave
-        r = get_slave_status('source')
-        if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
-            #start snap db
-            start_mysql('my_snap.cnf','target')
-            time.sleep(10)
-            gss2 = get_slave_status('target')
-            if gss2 is not None:
-                stop_slave('target')
-                reset_slave()
-            logger.info('starting snap db finished.')
-        else:
-            logger.info("The source db IO or SQL is not running.")
-            sys.exit(0)
-    
-    else:
-        logger.info('starting snap db.')
-        start_mysql('my_snap.cnf','target')
-        time.sleep(10)
-        gss2 = get_slave_status('target')
-        if gss2 is not None:
-            stop_slave('target')
-            reset_slave()
-        logger.info('starting snap db finished.')       
+        mount_dev(FLAGS.snap_dev,"snap_data")
         
-    if gss is not None:
-        start_slave('source')            
+        mount_dev(FLAGS.source_dev,"data")
+    except Exception as e:
+        logger.info("mount the dev failed ; %s",str(e))
     
+    
+    if str(os.popen("df -h |grep 'snap_data'|grep -v grep|wc -l").read()) == '1\n' :
+        start_mysql('my_snap.cnf','target')  
+        f = 1
+        c = 0
+        while(f):
+            time.sleep(3)
+            
+            if str(os.popen("netstat -lntp|grep 'LISTEN'|grep '3307'|grep mysqld |wc -l").read()) == '1\n':
+                try:
+                    stop_slave('target')
+                    reset_slave()
+                    f = 0
+                    logger.info("reset slave waiting time : %ss" % (str(c * 3)))
+                except Exception as e:
+                    logger.info('reset slave failed; %s',str(e))
+            else:
+                c += 1
+                if c > 100:
+                    logger.info("reset target slave timeout : %ss" %(str(c * 3)))
+                    sys.exit(0)
+                    
+        start_mysql('my.cnf','source')
+                 
+    else:
+        logger.info("snap_data dev not mounted.")
+        sys.exit(0)        
+   
 
 if __name__ == '__main__':
-        
         
         logger = RecordLog('preDBcreate').log()
         
