@@ -130,10 +130,11 @@ def get_col_info(table_name):
     cursor = conn.cursor()
     cursor.execute('show create table {table_name}'.format(table_name=table_name))
     result = cursor.fetchall()
+    print(result)
     cursor.close()
     conn.close()
     
-    for item in result.split("\n")[1:]:
+    for item in result[0][1].split("\n")[1:]:
         r = re.search("^`", item.strip())
         if r:
             col_list.append(item.split()[0].strip("`"))
