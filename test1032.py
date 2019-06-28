@@ -240,7 +240,8 @@ class singleReplCheck(object):
         
         ret = create_sql(split_sql_list)
         
-        
+        conn = get_conn()
+        cursor = conn.cursor() 
         for line in ret:
             if event == "Delete_rows":
                 select_sql = line.replace('DELETE','SELECT 1')
@@ -248,26 +249,23 @@ class singleReplCheck(object):
                 select_sql = line.replace('UPDATE','SELECT 1 from')
             
             
-        conn = get_conn()
-        cursor = conn.cursor()    
-        cursor.execute(select_sql)
-        result = cursor.fetchall()
+           
+            cursor.execute(select_sql)
+            result = cursor.fetchall()
+        
+            
+            if not result:
+                insert_sql = delete_or_update_to_insert(line)
+                run_sql = ' Error_code: 1032 -- run SQL:  %s' % insert_sql
+                
+                print('warning %s' % run_sql)
+    
+                cursor.execute(insert_sql)
+                cursor.execute("start slave sql_thread")
+            
         cursor.close()
         conn.close()
         
-        if not result:
-            insert_sql = delete_or_update_to_insert(sql)
-            run_sql = ' Error_code: 1032 -- run SQL:  %s' % insert_sql
-            
-            print('warning %s' % run_sql)
-
-            conn = get_conn()
-            cursor = conn.cursor()
-            cursor.execute(insert_sql)
-            cursor.execute("start slave sql_thread")
-            cursor.close()
-            conn.close()
-
         return(1)
         
     
@@ -309,12 +307,8 @@ def main():
                 singleReplCheck.handler_1062(r, rpl_mode)
                 #
             if ( r['Last_Errno'] == 1032 ):
-               resul=singleReplCheck.handler_1032(r, rpl_mode)
-               if(resul):
-                   continue
-               else:
-                   print("repair finished.")
-                   time.sleep(200000)
+               singleReplCheck.handler_1032(r, rpl_mode)
+
         else:
             count += 1
             logger.info('count :%s' % count)
