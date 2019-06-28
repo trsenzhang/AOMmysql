@@ -229,7 +229,8 @@ class singleReplCheck(object):
         log_file_name = err_msg.split('master log')[1].split(',')[0].strip()
         log_stop_position = err_msg.split('master log')[1].split(',')[1].split()[1]
         log_start_position = r['Exec_Master_Log_Pos']
-          
+        
+        print('-----')
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
         
         binlog_result=os.popen(do_getlog2).readlines()
@@ -242,6 +243,7 @@ class singleReplCheck(object):
         
         conn = get_conn()
         cursor = conn.cursor() 
+        print('--0--')
         for line in ret:
             print('--1--')
             if event == "Delete_rows":
