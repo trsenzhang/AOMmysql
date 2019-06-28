@@ -240,7 +240,7 @@ class singleReplCheck(object):
         split_sql_list = split_sql(row_recode, col_info)
         
         ret = create_sql(split_sql_list)
-        
+        print(ret)
         conn = get_conn()
         cursor = conn.cursor() 
         print('--0--')
