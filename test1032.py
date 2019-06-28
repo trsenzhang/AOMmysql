@@ -232,7 +232,7 @@ class singleReplCheck(object):
         
         print('-----')
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
-        
+        print(do_getlog2)
         binlog_result=os.popen(do_getlog2).readlines()
 
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
