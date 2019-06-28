@@ -243,17 +243,18 @@ class singleReplCheck(object):
         conn = get_conn()
         cursor = conn.cursor() 
         for line in ret:
+            print('--1--')
             if event == "Delete_rows":
                 select_sql = line.replace('DELETE','SELECT 1')
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
             
             
-           
+            print('--2--')
             cursor.execute(select_sql)
             result = cursor.fetchall()
         
-            
+            print('--3--')
             if not result:
                 insert_sql = delete_or_update_to_insert(line)
                 run_sql = ' Error_code: 1032 -- run SQL:  %s' % insert_sql
