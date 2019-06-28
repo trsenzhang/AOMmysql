@@ -218,7 +218,7 @@ class singleReplCheck(object):
         
     @staticmethod
     def handler_1032(r, rpl):
-s        err_msg = r['Last_SQL_Error']
+        err_msg = r['Last_SQL_Error']
         col_info=[]
         event = err_msg.split('event')[0].split('execute')[1].strip()
         
