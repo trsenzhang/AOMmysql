@@ -218,7 +218,7 @@ class singleReplCheck(object):
         
     @staticmethod
     def handler_1032(r, rpl):
-        err_msg = r['Last_SQL_Error']
+s        err_msg = r['Last_SQL_Error']
         col_info=[]
         event = err_msg.split('event')[0].split('execute')[1].strip()
         
@@ -240,14 +240,16 @@ class singleReplCheck(object):
         
         ret = create_sql(split_sql_list)
         
-        for sql in ret:
+        
+        for line in ret:
             if event == "Delete_rows":
-                select_sql = sql.replace('DELETE','SELECT 1')
+                select_sql = line.replace('DELETE','SELECT 1')
             else:
-                select_sql = sql.replace('UPDATE','SELECT 1 from')
+                select_sql = line.replace('UPDATE','SELECT 1 from')
+            
             
         conn = get_conn()
-        cursor = conn.cursor()
+        cursor = conn.cursor()    
         cursor.execute(select_sql)
         result = cursor.fetchall()
         cursor.close()
@@ -255,7 +257,8 @@ class singleReplCheck(object):
         
         if not result:
             insert_sql = delete_or_update_to_insert(sql)
-            run_sql = ' Error_code: 1032 -- run SQL: ' + insert_sql
+            run_sql = ' Error_code: 1032 -- run SQL:  %s' % insert_sql
+            
             print('warning %s' % run_sql)
 
             conn = get_conn()
@@ -306,7 +309,12 @@ def main():
                 singleReplCheck.handler_1062(r, rpl_mode)
                 #
             if ( r['Last_Errno'] == 1032 ):
-               singleReplCheck.handler_1032(r, rpl_mode)
+               resul=singleReplCheck.handler_1032(r, rpl_mode)
+               if(resul):
+                   continue
+               else:
+                   print("repair finished.")
+                   time.sleep(200000)
         else:
             count += 1
             logger.info('count :%s' % count)
