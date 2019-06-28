@@ -3,7 +3,7 @@
 
 """
 限制条件：
-1.无法修复一个事务中包含多个DML语句导致的1032和1062
+1.无法修复一个事务中包含多个DML语句导致的1032
 2.无法修复复合主键导致的1032和1062
 3.无在修复只读slave上1032和1062
 4.无法修复并行复制slave上1032和1062
@@ -17,7 +17,6 @@ import re
 import optparse
 import pymysql
 import platform
-import time
 from util.record_logging import RecordLog
 
 global logger
@@ -278,7 +277,7 @@ def main():
         else:
             count += 1
             logger.info('count :%s' % count)
-            if count >=100000:
+            if count >=1000000000:
                 break
     
     logger.info("slave repaired.")                  
