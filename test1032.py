@@ -268,7 +268,7 @@ class singleReplCheck(object):
             
         cursor.close()
         conn.close()
-        
+        print('--4--')
         return(1)
         
     
