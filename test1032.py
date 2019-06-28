@@ -130,7 +130,6 @@ def get_col_info(table_name):
     cursor = conn.cursor()
     cursor.execute('show create table {table_name}'.format(table_name=table_name))
     result = cursor.fetchall()
-    print(result)
     cursor.close()
     conn.close()
     
@@ -257,7 +256,7 @@ class singleReplCheck(object):
         if not result:
             insert_sql = delete_or_update_to_insert(sql)
             run_sql = ' Error_code: 1032 -- run SQL: ' + insert_sql
-            print('warning', run_sql)
+            print('warning %s' % run_sql)
 
             conn = get_conn()
             cursor = conn.cursor()
@@ -311,7 +310,7 @@ def main():
         else:
             count += 1
             logger.info('count :%s' % count)
-            if count >=1000000000:
+            if count >=100:
                 break
     
     logger.info("slave repaired.")                  
