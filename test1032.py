@@ -28,17 +28,11 @@ com_mysqlbinlog = "/usr/local/mysql/bin/mysqlbinlog"
 
 r1062 = r"Could not execute Write_rows event on table (.*); Duplicate entry '(.*)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
 
-'''
-Could not execute Write_rows event on table intrepaydb.t_dpay_third_collect; Row size too large (> 8126). Changing some columns to TEXT or BLOB or using ROW_FORMAT=DYNAMIC or ROW_FORMAT=COMPRESSED may help. In current row format, BLOB prefix of 768 bytes is stored inline., Error_code: 139; Duplicate entry '1906260940571966027' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log mysql-bin.000173, end_log_pos 112185003, Error_code: 1062
-'''
-
 r1062_0 = r"Could not execute Write_rows event on table (.*); Row size too large (.*); Duplicate entry '(.*)' for key 'PRIMARY', Error_code: 1062; handler error HA_ERR_FOUND_DUPP_KEY; the event's master log (.*), end_log_pos (\d+)"
 
 u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in (.*), Error_code: 1032; handler error HA_ERR_KEY_NOT_FOUND; the event's master log (.*), end_log_pos (\d+)"
 
 GET_FROM_LOG2="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s"
-GET_FROM_LOG="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |egrep '###'"
-GET_FROM_LOG_DML_COUNT="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s |egrep '### WHERE' |wc -l"
 
 FLAGS = optparse.Values()
 parser = optparse.OptionParser()
