@@ -237,6 +237,7 @@ class singleReplCheck(object):
         br = os.popen(do_getlog2).readlines()
         print(do_getlog2)
         #isn't multi DML in the transaction
+        binlog_result = 0
         for line in br:
             if line.startswith('#') and re.search("flags: STMT_END_F", line):
                 print("have SMTM_END_F,is ok.")
@@ -247,21 +248,21 @@ class singleReplCheck(object):
                 dlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),log_file_name)
                 br1 = os.popen(dlog).readlines()
                 for line in br1:
+                    end_log_pos = 0
                     print("teststesttst %s " % line)
                     if line.startswith('#') and re.search("flags: STMT_END_F", line):                 
                         print("have SMTM_END_F,is ok.")
                         m = re.search("#(.*) end_log_pos (\d+) (.*)",line)
-                        print("m : %s" % m.group(1))
+                        print("m : %s" % m.group(2))
                         end_log_pos = int(m.group(1))
                         print("end_log_pos :%s" % end_log_pos)
+                        dlog1 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),end_log_pos,log_file_name)
+                        binlog_result=os.popen(dlog1).readlines()
                         break
                 break
-            """
-                dlog1 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),end_log_pos,log_file_name)
-                binlog_result=os.popen(dlog1).readlines()
-                print("binlog_result %s" % binlog_result)
-            """
-        #print("binlog_result :%s" % binlog_result)
+
+
+        print("binlog_result :%s" % binlog_result)
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
         print("row_recode :%s" % row_recode)
         split_sql_list = split_sql(row_recode, col_info)
