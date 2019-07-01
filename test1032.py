@@ -234,22 +234,23 @@ class singleReplCheck(object):
         
         print('-----')
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
+        br = os.popen(do_getlog2).readlines()
         print(do_getlog2)
         #isn't multi DML in the transaction
-        for line in do_getlog2:
+        for line in br:
             if line.startswith('#') and re.search("flags: STMT_END_F", line):
                 print("have SMTM_END_F,is ok.")
-                binlog_result=os.popen(do_getlog2).readlines()
+                binlog_result=br
                 print("binlog_result %s" % binlog_result)
                 break
             else:
                 dlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),log_file_name)
-                for line in dlog:
+                br1 = os.popen(dlog).readlines()
+                for line in br1:
                     print("teststesttst %s " % line)
-                    if line.startswith('#') and re.search("flags: STMT_END_F", line):
-                                       
+                    if line.startswith('#') and re.search("flags: STMT_END_F", line):                 
                         print("have SMTM_END_F,is ok.")
-                        m = re.search("# (.*) end_log_pos (\d+) (.*)",do_getlog2)
+                        m = re.search("# (.*) end_log_pos (\d+) (.*)",line)
                         print("m : %s" % m.group(1))
                         end_log_pos = int(m.group(1))
                         print("end_log_pos :%s" % end_log_pos)
