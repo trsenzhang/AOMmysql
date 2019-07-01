@@ -250,7 +250,7 @@ class singleReplCheck(object):
                     print("teststesttst %s " % line)
                     if line.startswith('#') and re.search("flags: STMT_END_F", line):                 
                         print("have SMTM_END_F,is ok.")
-                        m = re.search("# (.*) end_log_pos (\d+) (.*)",line)
+                        m = re.search("#(.*) end_log_pos (\d+) (.*)",line)
                         print("m : %s" % m.group(1))
                         end_log_pos = int(m.group(1))
                         print("end_log_pos :%s" % end_log_pos)
