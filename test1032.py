@@ -237,10 +237,10 @@ class singleReplCheck(object):
         print(do_getlog2)
         #isn't multi DML in the transaction
         for line in do_getlog2:
-            binlog_result=0
             if line.startswith('#') and re.search("flags: STMT_END_F", line):
                 print("have SMTM_END_F,is ok.")
                 binlog_result=os.popen(do_getlog2).readlines()
+                print("binlog_result %s" % binlog_result)
                 break
             else:
                 dlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),log_file_name)
@@ -255,7 +255,8 @@ class singleReplCheck(object):
                 break
                 dlog1 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),end_log_pos,log_file_name)
                 binlog_result=os.popen(dlog1).readlines()
-                        
+                print("binlog_result %s" % binlog_result)
+        """               
         print("binlog_result :%s" % binlog_result)
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
         print("row_recode :%s" % row_recode)
@@ -292,7 +293,7 @@ class singleReplCheck(object):
         conn.close()
         print('--4--')
         return(1)
-        
+        """
     
 def chk_master_slave_gtid():
     pass    
