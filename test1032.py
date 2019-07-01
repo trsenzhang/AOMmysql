@@ -220,6 +220,7 @@ class singleReplCheck(object):
         
     @staticmethod
     def handler_1032(r, rpl):
+        global binlog_result
         err_msg = r['Last_SQL_Error']
         col_info=[]
         event = err_msg.split('event')[0].split('execute')[1].strip()
@@ -237,7 +238,6 @@ class singleReplCheck(object):
         print(do_getlog2)
         #isn't multi DML in the transaction
         for line in do_getlog2:
-            global binlog_result
             if line.startswith('#') and re.search("flags: STMT_END_F", line):
                 print("have SMTM_END_F,is ok.")
                 binlog_result=os.popen(do_getlog2).readlines()
