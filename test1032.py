@@ -33,6 +33,7 @@ r1062_0 = r"Could not execute Write_rows event on table (.*); Row size too large
 u1032 = r"Could not execute (.*)_rows event on table (.*); Can't find record in (.*), Error_code: 1032; handler error HA_ERR_KEY_NOT_FOUND; the event's master log (.*), end_log_pos (\d+)"
 
 GET_FROM_LOG2="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d --stop-position=%d %s"
+GET_FROM_LOG="%s -v --base64-output=decode-rows -R --host='%s' --port=%d --user='%s' --password='%s' --start-position=%d %s"
 
 FLAGS = optparse.Values()
 parser = optparse.OptionParser()
@@ -207,6 +208,13 @@ def delete_or_update_to_insert(delete_sql):
     run_sql = re.sub('DELETE FROM|UPDATE', 'INSERT INTO', sql_4)
     return run_sql
 
+def get_SMT_END_F(r,do_getlog2):
+    m = re.search("# (.*) end_log_pos (\d+) (.*)",do_getlog2)
+    print("m : %s" % m.group(1))
+    end_log_pos = int(m.group(1))
+    dlog = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), end_log_pos,log_file_name)
+    
+        
     
 class singleReplCheck(object): 
         
@@ -227,7 +235,25 @@ class singleReplCheck(object):
         print('-----')
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
         print(do_getlog2)
-        binlog_result=os.popen(do_getlog2).readlines()
+        #is multi DML in the transaction
+        for line in do_getlog2:
+            if line.startswith('#') and re.search("flags: STMT_END_F", line):
+                print("have SMTM_END_F,is ok.")
+                binlog_result=os.popen(do_getlog2).readlines()
+                break
+            else:
+                dlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),log_file_name)
+                for line in dlog:
+                    if line.startswith('#') and re.search("flags: STMT_END_F", line):
+                        print("have SMTM_END_F,is ok.")
+                        m = re.search("# (.*) end_log_pos (\d+) (.*)",do_getlog2)
+                        print("m : %s" % m.group(1))
+                        end_log_pos = int(m.group(1))
+                        binlog_result=os.popen(do_getlog2).readlines()
+                        break
+                dlog1 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),end_log_pos,log_file_name)
+                binlog_result=os.popen(dlog1).readlines()
+                        
         print("binlog_result :%s" % binlog_result)
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
         print("row_recode :%s" % row_recode)
