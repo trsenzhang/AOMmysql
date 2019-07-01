@@ -245,8 +245,9 @@ class singleReplCheck(object):
             else:
                 dlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),log_file_name)
                 for line in dlog:
-                    print("teststesttst")
+                    print("teststesttst %s " % line)
                     if line.startswith('#') and re.search("flags: STMT_END_F", line):
+                                       
                         print("have SMTM_END_F,is ok.")
                         m = re.search("# (.*) end_log_pos (\d+) (.*)",do_getlog2)
                         print("m : %s" % m.group(1))
@@ -259,7 +260,7 @@ class singleReplCheck(object):
                 binlog_result=os.popen(dlog1).readlines()
                 print("binlog_result %s" % binlog_result)
             """
-        print("binlog_result :%s" % binlog_result)
+        #print("binlog_result :%s" % binlog_result)
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
         print("row_recode :%s" % row_recode)
         split_sql_list = split_sql(row_recode, col_info)
