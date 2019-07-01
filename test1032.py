@@ -251,12 +251,14 @@ class singleReplCheck(object):
                         m = re.search("# (.*) end_log_pos (\d+) (.*)",do_getlog2)
                         print("m : %s" % m.group(1))
                         end_log_pos = int(m.group(1))
+                        print("end_log_pos :%s" % end_log_pos)
                         break
                 break
+            """
                 dlog1 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),end_log_pos,log_file_name)
                 binlog_result=os.popen(dlog1).readlines()
                 print("binlog_result %s" % binlog_result)
-        """               
+            """
         print("binlog_result :%s" % binlog_result)
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
         print("row_recode :%s" % row_recode)
@@ -293,7 +295,7 @@ class singleReplCheck(object):
         conn.close()
         print('--4--')
         return(1)
-        """
+        
     
 def chk_master_slave_gtid():
     pass    
