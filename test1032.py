@@ -245,7 +245,7 @@ class singleReplCheck(object):
             else:
                 dlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),log_file_name)
                 for line in dlog:
-                    end_log_pos =  0
+                    print("teststesttst")
                     if line.startswith('#') and re.search("flags: STMT_END_F", line):
                         print("have SMTM_END_F,is ok.")
                         m = re.search("# (.*) end_log_pos (\d+) (.*)",do_getlog2)
