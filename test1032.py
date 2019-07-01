@@ -254,7 +254,7 @@ class singleReplCheck(object):
                         print("have SMTM_END_F,is ok.")
                         m = re.search("#(.*) end_log_pos (\d+) (.*)",line)
                         print("m : %s" % m.group(2))
-                        end_log_pos = int(m.group(1))
+                        end_log_pos = int(m.group(2))
                         print("end_log_pos :%s" % end_log_pos)
                         dlog1 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),end_log_pos,log_file_name)
                         binlog_result=os.popen(dlog1).readlines()
