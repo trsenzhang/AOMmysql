@@ -236,6 +236,7 @@ class singleReplCheck(object):
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
         print(do_getlog2)
         #isn't multi DML in the transaction
+        global binlog_result
         for line in do_getlog2:
             global end_log_pos
             if line.startswith('#') and re.search("flags: STMT_END_F", line):
