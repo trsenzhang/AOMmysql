@@ -153,16 +153,18 @@ def find_row_recode_from_binlog(event, table_name, result):
             table_map_flag = 1
         if line.startswith('#') and re.search(event, line):
             event_flag = 1
-        if re.search('WHERE', line):
-            where_flag = 1
         if line.startswith(option_keyword):
             recode_list.append('---line---')
+            recode_list.append(option_keyword)
             option_flag = 1
+        if re.search('WHERE', line):
+            where_flag = 1
         if line.startswith('### SET'):
             where_flag = 0
             continue
         if line.startswith('###') and table_map_flag and event_flag and where_flag and option_flag:
             recode_list.append(line.strip())
+            
     recode_list.append('---line---')
     return recode_list
 
