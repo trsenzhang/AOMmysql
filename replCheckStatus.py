@@ -286,10 +286,12 @@ class singleReplCheck(object):
                 break
         #put all row in the list   
         row_recode = find_row_at_binlog(event,table_name,binlog_result)
-        
+        logger.info("row_recode : %s" % row_recode)
         #format data in the list 
         sql_list = format_sql(row_recode, col_info)
         sql_set = repair1032_sql(sql_list)
+        logger.info("sql_list : %s" % sql_list)
+        logger.info("sql_set : %s" % sql_set)
         
         conn = get_conn()
         cursor = conn.cursor() 
