@@ -261,30 +261,21 @@ class singleReplCheck(object):
                         break
                 break
 
-
-        print("binlog_result :%s" % binlog_result)
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
-        print("row_recode :%s" % row_recode)
         split_sql_list = split_sql(row_recode, col_info)
-        print("split_sql_list :%s" % split_sql_list)
         ret = create_sql(split_sql_list)
         print(ret)
         conn = get_conn()
         cursor = conn.cursor() 
-        print('--0--')
         for line in ret:
-            print('--1--')
             if event == "Delete_rows":
                 select_sql = line.replace('DELETE','SELECT 1')
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
             
-            
-            print('--2--')
             cursor.execute(select_sql)
             result = cursor.fetchall()
         
-            print('--3--')
             if not result:
                 insert_sql = delete_or_update_to_insert(line)
                 run_sql = ' Error_code: 1032 -- run SQL:  %s' % insert_sql
@@ -296,7 +287,6 @@ class singleReplCheck(object):
             
         cursor.close()
         conn.close()
-        print('--4--')
         return(1)
         
     
