@@ -291,13 +291,12 @@ class singleReplCheck(object):
         sql_list = format_sql(row_recode, col_info)
         sql_set = repair1032_sql(sql_list)
         logger.info("sql_list : %s" % sql_list)
-        logger.info("sql_set : %s" % sql_set)
         
         conn = get_conn()
         cursor = conn.cursor() 
         for line in sql_set:
             if event == "Delete_rows":
-                select_sql = line.replace('DELETE','SELECT 1')
+                select_sql = line.replace('DELETE','SELECT 1 from')
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
             logger.info('will execute sql: %s' % select_sql)
