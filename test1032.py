@@ -257,7 +257,7 @@ class singleReplCheck(object):
                 break
         #put all row in the list   
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
-        print(row_recode)
+        logger.info(row_recode)
         #split data in the list 
         split_sql_list = split_sql(row_recode, col_info)
         ret = create_sql(split_sql_list)
