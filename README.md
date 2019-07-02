@@ -106,7 +106,7 @@ sh  	preDBcreate.sh
 2019-06-27 09:54:23.981953 : INFO : 1062sql :delete from trsen.trsen where id='1906260946257487622'
 2019-06-27 09:54:23.981953 : INFO : repaired 1062 error finished, error row:1
 ```
--[1032错误测试模拟 ]（http://www.trsenzhangdb.com/?p=1241)
+- [1032错误测试模拟 ]（http://www.trsenzhangdb.com/?p=1241)
 
 
 # 联系作者:
