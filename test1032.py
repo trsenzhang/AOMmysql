@@ -142,6 +142,7 @@ def find_row_recode_from_binlog(event, table_name, result):
     where_flag = 1
     option_flag = 0
     option_keyword = '### ' + event.split('_')[0].upper()
+    #format the table name
     new_table_name = '`{schema_name}`.`{table_name}`'.format(schema_name=table_name.split('.')[0],
                                                              table_name=table_name.split('.')[1])
     recode_list = []
@@ -214,6 +215,7 @@ class singleReplCheck(object):
     def handler_1032(r, rpl):
         err_msg = r['Last_SQL_Error']
         col_info=[]
+        #Delete_rows Update_rows
         event = err_msg.split('event')[0].split('execute')[1].strip()
         table_name = err_msg.split('on table')[1].split(';')[0].strip()
         col_info = get_col_info(table_name)
@@ -248,8 +250,9 @@ class singleReplCheck(object):
                 break
 
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
+        logger.info("row_recode : %s" % row_recode)
         split_sql_list = split_sql(row_recode, col_info)
-        print(split_sql_list)
+        logger.info("split_sql_list : %s" % split_sql_list)
         print("TYPE : %s" % split_sql_list)
         ret = create_sql(split_sql_list)
         conn = get_conn()
