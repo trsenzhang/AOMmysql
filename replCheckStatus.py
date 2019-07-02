@@ -199,7 +199,7 @@ def delete_or_update_to_insert(delete_sql):
     sql_2 = sql_1.replace('and', ',')
     sql_3 = re.sub(' (\w)+=', ' ', sql_2)
     sql_4 = re.sub(';', ');', sql_3)
-    run_sql = re.sub('DELETE FROM|UPDATE', 'INSERT INTO', sql_4)
+    run_sql = re.sub('DELETE|UPDATE', 'INSERT INTO', sql_4)
     return run_sql  
     
 
