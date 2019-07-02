@@ -206,15 +206,7 @@ def delete_or_update_to_insert(delete_sql):
     sql_3 = re.sub(' (\w)+=', ' ', sql_2)
     sql_4 = re.sub(';', ');', sql_3)
     run_sql = re.sub('DELETE FROM|UPDATE', 'INSERT INTO', sql_4)
-    return run_sql
-
-def get_SMT_END_F(r,do_getlog2):
-    m = re.search("# (.*) end_log_pos (\d+) (.*)",do_getlog2)
-    print("m : %s" % m.group(1))
-    end_log_pos = int(m.group(1))
-    dlog = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), end_log_pos,log_file_name)
-    
-        
+    return run_sql  
     
 class singleReplCheck(object): 
         
@@ -223,8 +215,6 @@ class singleReplCheck(object):
         err_msg = r['Last_SQL_Error']
         col_info=[]
         event = err_msg.split('event')[0].split('execute')[1].strip()
-        
-        ####test.test
         table_name = err_msg.split('on table')[1].split(';')[0].strip()
         col_info = get_col_info(table_name)
         
@@ -232,7 +222,6 @@ class singleReplCheck(object):
         log_stop_position = err_msg.split('master log')[1].split(',')[1].split()[1]
         log_start_position = r['Exec_Master_Log_Pos']
         
-        print('-----')
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
         br = os.popen(do_getlog2).readlines()
         print(do_getlog2)
@@ -240,9 +229,8 @@ class singleReplCheck(object):
         binlog_result = 0
         for line in br:
             if line.startswith('#') and re.search("flags: STMT_END_F", line):
-                print("have SMTM_END_F,is ok.")
+                logger.info("single dml have SMTM_END_F,is ok.")
                 binlog_result=br
-                print("binlog_result %s" % binlog_result)
                 break
             else:
                 dlog = GET_FROM_LOG % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),log_file_name)
@@ -250,11 +238,10 @@ class singleReplCheck(object):
                 for line in br1:
                     end_log_pos = 0
                     if line.startswith('#') and re.search("flags: STMT_END_F", line):                 
-                        print("have SMTM_END_F,is ok.")
+                        logger.info("multi dml have SMTM_END_F,is ok.")
                         m = re.search("#(.*) end_log_pos (\d+) (.*)",line)
-                        print("m : %s" % m.group(2))
                         end_log_pos = int(m.group(2))
-                        print("end_log_pos :%s" % end_log_pos)
+                        logger.info("end_log_pos :%s" % end_log_pos)
                         dlog1 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position),end_log_pos,log_file_name)
                         binlog_result=os.popen(dlog1).readlines()
                         break
@@ -262,6 +249,8 @@ class singleReplCheck(object):
 
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
         split_sql_list = split_sql(row_recode, col_info)
+        print(split_sql_list)
+        print("TYPE : %s" % split_sql_list)
         ret = create_sql(split_sql_list)
         conn = get_conn()
         cursor = conn.cursor() 
