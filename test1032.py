@@ -249,7 +249,6 @@ class singleReplCheck(object):
                 br1 = os.popen(dlog).readlines()
                 for line in br1:
                     end_log_pos = 0
-                    print("teststesttst %s " % line)
                     if line.startswith('#') and re.search("flags: STMT_END_F", line):                 
                         print("have SMTM_END_F,is ok.")
                         m = re.search("#(.*) end_log_pos (\d+) (.*)",line)
@@ -264,7 +263,6 @@ class singleReplCheck(object):
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
         split_sql_list = split_sql(row_recode, col_info)
         ret = create_sql(split_sql_list)
-        print(ret)
         conn = get_conn()
         cursor = conn.cursor() 
         for line in ret:
@@ -272,7 +270,7 @@ class singleReplCheck(object):
                 select_sql = line.replace('DELETE','SELECT 1')
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
-            
+            print(select_sql)
             cursor.execute(select_sql)
             result = cursor.fetchall()
         
