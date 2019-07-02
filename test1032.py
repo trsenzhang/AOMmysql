@@ -260,6 +260,7 @@ class singleReplCheck(object):
         logger.info(row_recode)
         #split data in the list 
         split_sql_list = split_sql(row_recode, col_info)
+        logger.info(split_sql_list)
         ret = create_sql(split_sql_list)
         conn = get_conn()
         cursor = conn.cursor() 
@@ -271,8 +272,7 @@ class singleReplCheck(object):
                 logger.info(select_sql)
             
             cursor.execute(select_sql)
-            result = cursor.fetchall()
-            print("result: %s " % result)
+            result = cursor.fetchall() 
             
             if not result:
                 insert_sql = delete_or_update_to_insert(line)
