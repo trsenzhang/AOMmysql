@@ -128,7 +128,8 @@ def find_row_at_binlog(event, table_name, result):
     event_flag = 0
     where_flag = 0
     option_flag = 0
-    option_keyword = '### ' + event.split('_')[0].upper()
+    opt = event.split('_')[0].upper()
+    option_keyword = '### ' + opt
     #format the table name
     new_table_name = '`{schema_name}`.`{table_name}`'.format(schema_name=table_name.split('.')[0],
                                                              table_name=table_name.split('.')[1])
@@ -150,12 +151,14 @@ def find_row_at_binlog(event, table_name, result):
         if re.search('WHERE', line):
             where_flag = 1
             
-        if line.startswith('### SET'):
+        if line.startswith('### SET') and opt=='UPDATE':
             where_flag = 0
             option_flag = 0
             where_flag = 0
             continue
-        
+        else:
+            pass
+            
         if line.startswith('###') and table_map_flag and event_flag and where_flag and option_flag:
             recode_list.append(line.strip())
             
