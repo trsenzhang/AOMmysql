@@ -106,7 +106,7 @@ sh preDBcreate.sh
 ```
 
 
-#####[1032错误测试模拟](http://www.trsenzhangdb.com/?p=1241)
+##### [1032错误模拟案例](http://www.trsenzhangdb.com/?p=1241)
 
 
 
