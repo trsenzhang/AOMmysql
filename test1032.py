@@ -139,29 +139,38 @@ def get_col_info(table_name):
 def find_row_recode_from_binlog(event, table_name, result):
     table_map_flag = 0
     event_flag = 0
-    where_flag = 1
+    where_flag = 0
     option_flag = 0
     option_keyword = '### ' + event.split('_')[0].upper()
+    
     #format the table name
     new_table_name = '`{schema_name}`.`{table_name}`'.format(schema_name=table_name.split('.')[0],
                                                              table_name=table_name.split('.')[1])
     recode_list = []
 
     for line in result:
-
+        
+        ##190701 11:50:38 server id 1503306  end_log_pos 953 CRC32 0x7a5a4063    Table_map: `trsen`.`sbtest1` mapped to number 109
         if line.startswith('#') and re.search("Table_map", line) and re.search(new_table_name, line):
             table_map_flag = 1
+         
+        ##190701 11:50:38 server id 1503306  end_log_pos 8969 CRC32 0xe73a4a75   Update_rows: table id 109    
         if line.startswith('#') and re.search(event, line):
-            event_flag = 1
-        if line.startswith(option_keyword):
-            recode_list.append('---line---')
-            recode_list.append(option_keyword+' '+new_table_name)
-            option_flag = 1
-        if re.search('WHERE', line):
-            where_flag = 1
-        if line.startswith('### SET'):
-            where_flag = 0
-            continue
+            event_flag = 1        
+        
+        if line.startswith('###') and table_map_flag and event_flag:    
+            if line.startswith(option_keyword):
+                recode_list.append('---line---')
+                recode_list.append(option_keyword+' '+new_table_name)
+                option_flag = 1
+                
+            if re.search('WHERE', line):
+                recode_list.append(line.strip())
+                where_flag = 1
+                
+            if line.startswith('### SET'):
+                where_flag = 0       
+        
         if line.startswith('###') and table_map_flag and event_flag and where_flag and option_flag:
             recode_list.append(line.strip())
             
