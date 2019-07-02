@@ -1,8 +1,8 @@
 # AOMmysql
-*目的：
+* 目的：
   本项目针对mysql数据库上各种自动化小功能实现，每个小功能里完成一个单一性的功能，例如autoInstall.py完成了推送方式安装，部署mysql软件；
   
-*要求：
+* 要求：
 
 1.要求运行python的版本在3.x
 
@@ -43,11 +43,11 @@ make && make install
 
 # 自动进行MYSQL UAT库部署 preDBcreate.py
 
-*限制条件:
--1.本脚本只适合linux环境
--2.mysql存放的数据目录必须是在LVM上
--3.基于mysql复制架构及LINUX LVM SNAPSHOT技术
--4.一些端口信息已经限制
+* 限制条件:
+- 1.本脚本只适合linux环境
+- 2.mysql存放的数据目录必须是在LVM上
+- 3.基于mysql复制架构及LINUX LVM SNAPSHOT技术
+- 4.一些端口信息已经限制
 
 *实际环境部署可参考blog:
 http://www.trsenzhangdb.com/?p=1232
