@@ -298,7 +298,7 @@ class singleReplCheck(object):
                 select_sql = line.replace('DELETE','SELECT 1')
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
-            
+            logger.info('will execute sql: %s' % select_sql)
             cursor.execute(select_sql)
             result = cursor.fetchall() 
             
