@@ -155,7 +155,7 @@ def find_row_recode_from_binlog(event, table_name, result):
             event_flag = 1
         if line.startswith(option_keyword):
             recode_list.append('---line---')
-            recode_list.append(option_keyword)
+            recode_list.append(option_keyword+new_table_name)
             option_flag = 1
         if re.search('WHERE', line):
             where_flag = 1
@@ -174,7 +174,6 @@ def split_sql(recode_list, col_info):
     count = 0
     for item in recode_list[1:]:
         item = item.strip('### ')
-        print("item %s " % item)
         if count <= num:
             if re.search("^@", item):
                 if re.search("^@1", item):
