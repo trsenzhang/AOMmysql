@@ -51,7 +51,7 @@
 
  4.一些端口信息已经限制
 
-##### 实际环境部署可参考blog：[实际环境部署可参考blog](http://www.trsenzhangdb.com/?p=1232)
+##### [实际环境部署可参考](http://www.trsenzhangdb.com/?p=1232)
 
 * 运行方式:
 ``` shell
@@ -106,7 +106,7 @@ sh preDBcreate.sh
 ```
 
 
-##### 案例测试：[1032错误测试模拟](http://www.trsenzhangdb.com/?p=1241)
+#####[1032错误测试模拟](http://www.trsenzhangdb.com/?p=1241)
 
 
 
