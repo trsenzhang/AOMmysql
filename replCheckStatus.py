@@ -88,7 +88,7 @@ def get_rpl_mode(conn):
     cursor = conn.cursor()
     cursor.execute(GTID_MODE)
     r = cursor.fetchone()
-    print('get_rpl_mode r -> %s' % r)
+    logger.info('get_rpl_mode r -> %s' % r)
     if (r[0] == "ON"):
         return 1
     else:
@@ -100,7 +100,7 @@ def get_only_status(conn):
     cursor = conn2.cursor()
     cursor.execute(sql)
     r = cursor.fetchone()
-    print('super_read_ony : %s' % r[0])
+    logger.info('super_read_ony : %s' % r[0])
     conn2.close()
     return r[0]
 
@@ -240,7 +240,6 @@ class singleReplCheck(object):
         try:
             cursor.execute(sql)
         except Exception as e:
-            print("1062 excute sql error: %s" % str(e))
             logger.info("1062 excute sql error: %s" % str(e))
         cursor.execute("start slave sql_thread")
         cursor.close()
@@ -330,14 +329,14 @@ def main():
     try:
         conn = get_conn()
     except Exception as e:
-        print('Can\'t connect to mysql %s:%s ' %(FLAGS.host,FLAGS.port))
+        logger.info('Can\'t connect to mysql %s:%s ' %(FLAGS.host,FLAGS.port))
         sys.exit(0)
         
     
     r = get_slave_status(conn)
     
     if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "Yes"):
-        print("Rpl Ok")
+        logger.info("Rpl Ok")
         if (r['Seconds_Behind_Master'] > 0):
             print(r['Seconds_Behind_Master'])            
         conn.close()
@@ -348,8 +347,8 @@ def main():
         r = get_slave_status(conn)
         if (r['Slave_IO_Running'] == "Yes" and r['Slave_SQL_Running'] == "No"):
             rpl_mode = get_rpl_mode(conn)
-            print("rpl_mode %s " % rpl_mode)
-            print(r['Last_Errno'])
+            logger.info("rpl_mode %s " % rpl_mode)
+            logger.info(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
                 singleReplCheck.handler_1062(r, rpl_mode)
                 #
@@ -370,8 +369,6 @@ if __name__ == '__main__':
         if(platform.system()=='Linux'):
             logger.info('The platform check pass.')
             new_argv = ParseArgs(sys.argv[1:])
-            print(new_argv)
-            print(FLAGS)
             main()
         else:
             logger.info('The ENV is not linux,waiting coding')
