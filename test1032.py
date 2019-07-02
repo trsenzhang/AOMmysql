@@ -169,23 +169,24 @@ def find_row_recode_from_binlog(event, table_name, result):
 def split_sql(recode_list, col_info):
     num = len(col_info)
     sql_file = []
-    id = 0
+    count = 0
     for item in recode_list[1:]:
         item = item.strip('### ')
-        if id <= num:
+        print("item %s " % item)
+        if count <= num:
             if re.search("^@", item):
                 if re.search("^@1", item):
-                    a = re.sub("^@1", col_info[id], item)
+                    a = re.sub("^@1", col_info[count], item)
                 else:
-                    a = re.sub("^@[\d]+", 'and ' + col_info[id], item)
+                    a = re.sub("^@[\d]+", 'and ' + col_info[count], item)
                 if a:
-                    id += 1
+                    count += 1
                     sql_file.append(a)
                 else:
-                    id = 0
+                    count = 0
                     sql_file.append(item)
             else:
-                id = 0
+                count = 0
                 sql_file.append(item)
     return sql_file
 
@@ -226,7 +227,7 @@ class singleReplCheck(object):
         
         do_getlog2 = GET_FROM_LOG2 % (com_mysqlbinlog, r['Master_Host'], int(r['Master_Port']),FLAGS.user,FLAGS.password, int(log_start_position), int(log_stop_position),log_file_name)
         br = os.popen(do_getlog2).readlines()
-        print(do_getlog2)
+        
         #isn't multi DML in the transaction
         binlog_result = 0
         for line in br:
@@ -248,12 +249,11 @@ class singleReplCheck(object):
                         binlog_result=os.popen(dlog1).readlines()
                         break
                 break
-
+        #put all row in the list   
         row_recode = find_row_recode_from_binlog(event,table_name,binlog_result)
-        logger.info("row_recode : %s" % row_recode)
+        
+        #split data in the list 
         split_sql_list = split_sql(row_recode, col_info)
-        logger.info("split_sql_list : %s" % split_sql_list)
-        print("TYPE : %s" % split_sql_list)
         ret = create_sql(split_sql_list)
         conn = get_conn()
         cursor = conn.cursor() 
@@ -262,7 +262,7 @@ class singleReplCheck(object):
                 select_sql = line.replace('DELETE','SELECT 1')
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
-            print(select_sql)
+                logger.info(select_sql)
             """
             cursor.execute(select_sql)
             result = cursor.fetchall()
