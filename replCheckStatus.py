@@ -160,7 +160,10 @@ def find_row_at_binlog(event, table_name, result):
             pass
             
         if line.startswith('###') and table_map_flag and event_flag and where_flag and option_flag:
-            recode_list.append(line.strip())
+            if line.startswith(option_keyword) == '### DELETE FROM':
+                pass
+            else:
+                recode_list.append(line.strip())
             
     recode_list.append('---line---')
     return recode_list
