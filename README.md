@@ -8,7 +8,7 @@
 1.要求运行python的版本在3.x
 
     环境配置
-    ```shell
+    ``` shell
     wget https://www.python.org/ftp/3.7.0/Python-3.7.0.tgz
     yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel gcc make
     ./configure --prefix=/opt/python --enable-optimizations
@@ -27,7 +27,6 @@
 ![image](https://github.com/trsenzhang/AOMmysql/blob/master/doc/auto_install_mysql_soft.PNG)
 
 * 运行如下脚本：
-
 ``` python
 /dfile/python/env/anaconda3/bin/python autoInstall.py
 ```
@@ -52,12 +51,11 @@
 
  4.一些端口信息已经限制
 
-*实际环境部署可参考blog:
-http://www.trsenzhangdb.com/?p=1232
+##### 实际环境部署可参考blog：[实际环境部署可参考blog](http://www.trsenzhangdb.com/?p=1232)
 
 * 运行方式:
-```shell
-sh  	preDBcreate.sh
+``` shell
+sh preDBcreate.sh
 ```
 或者放crontab中，定期，我所在的实际生产中放置crontab中进行定期调度
 
@@ -108,7 +106,14 @@ sh  	preDBcreate.sh
 ```
 
 
-##### 请点击：[1032错误测试模拟](http://www.trsenzhangdb.com/?p=1241)
+##### 案例测试：[1032错误测试模拟](http://www.trsenzhangdb.com/?p=1241)
+
+
+
+
+
+
+
 
 
 # 联系作者:
