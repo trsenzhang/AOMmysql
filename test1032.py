@@ -271,6 +271,7 @@ class singleReplCheck(object):
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
             print(select_sql)
+            """
             cursor.execute(select_sql)
             result = cursor.fetchall()
         
@@ -282,7 +283,7 @@ class singleReplCheck(object):
     
                 cursor.execute(insert_sql)
                 cursor.execute("start slave sql_thread")
-            
+            """
         cursor.close()
         conn.close()
         return(1)
