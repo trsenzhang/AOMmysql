@@ -153,6 +153,7 @@ def find_row_at_binlog(event, table_name, result):
         if line.startswith('### SET'):
             where_flag = 0
             option_flag = 0
+            where_flag = 0
             continue
         
         if line.startswith('###') and table_map_flag and event_flag and where_flag and option_flag:
