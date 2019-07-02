@@ -352,13 +352,12 @@ def main():
             logger.info(r['Last_Errno'])
             if ( r['Last_Errno'] == 1062 ):
                 singleReplCheck.handler_1062(r, rpl_mode)
-                #
+            
             if ( r['Last_Errno'] == 1032 ):
                singleReplCheck.handler_1032(r, rpl_mode)
         else:
             count += 1
-            logger.info('count :%s' % count)
-            if count >=1000000000:
+            if count >=1000:
                 break
     
     logger.info("slave repaired.")                  
