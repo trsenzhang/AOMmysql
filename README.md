@@ -1,39 +1,39 @@
 # AOMmysql
 * 目的：
+  
   本项目针对mysql数据库上各种自动化小功能实现，每个小功能里完成一个单一性的功能，例如autoInstall.py完成了推送方式安装，部署mysql软件；
   
 * 要求：
 
 1.要求运行python的版本在3.x
 
-环境配置
-wget https://www.python.org/ftp/3.7.0/Python-3.7.0.tgz
-
-yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel gcc make
-
-./configure --prefix=/opt/python --enable-optimizations
-
-make && make install 
-
+    环境配置
+    ```shell
+    wget https://www.python.org/ftp/3.7.0/Python-3.7.0.tgz
+    yum install zlib-devel bzip2-devel openssl-devel ncurses-devel sqlite-devel readline-devel tk-devel libffi-devel gcc make
+    ./configure --prefix=/opt/python --enable-optimizations
+    make && make install 
+    ```
 2.测试中安装的mysql服务器的python环境2.7.x可通过
 
 3.软件服务中心服务器到mysql服务器网络上具有连通性
 
 
-功能运行方式：
+* 功能运行方式：
 
-一.自动化推送安装部署mysql软件 (主体逻辑autoInstall.py)
+# 自动化推送安装部署mysql软件 (主体逻辑autoInstall.py)
 
-流程图如下：
+* 流程图如下：
 
 ![image](https://github.com/trsenzhang/AOMmysql/blob/master/doc/auto_install_mysql_soft.PNG)
 
-运行如下脚本：
+* 运行如下脚本：
 
+``` python
 /dfile/python/env/anaconda3/bin/python autoInstall.py
+```
 
-
-日志目录：
+* 日志目录：
 
 1.在AOMmysql/logs下面产生主干程序的日志信息
 
@@ -52,7 +52,7 @@ make && make install
 *实际环境部署可参考blog:
 http://www.trsenzhangdb.com/?p=1232
 
-*运行方式:
+* 运行方式:
 ```shell
 sh  	preDBcreate.sh
 ```
@@ -61,33 +61,28 @@ sh  	preDBcreate.sh
 
 # 自动修复复制中常见错误
 
-*工具介绍：
+* 工具介绍：
 
 2019-06-27添加自动修复1062错误；通过在slave端运行repl.sh即可修复1062错误（在5.7；5.6版本测试均已没有问题）；
 
 本工具依赖mysqlbinlog及pymysql
 
-
-*原理：
+* 原理：
 
 1.1062错误因主键冲突，所以通过报错信息将重复的主键在slave端删除，然后重新开启sql_thread
 
 
+* 要求：
 
+ * 1.binlog必须是row格式
 
-*要求：
+ * 2.GTID是否开启没有做强制要求（实际及测试中的环境都是基于GTID模式）
 
-1.binlog必须是row格式
+* 限制：
 
-2.GTID是否开启没有做强制要求（实际及测试中的环境都是基于GTID模式）
+ * 1.暂时只能提供一个事务中只有一条DML操作，并且主键只有一个字段；复合主键暂不支持
 
-
-
-限制：
-
-1.暂时只能提供一个事务中只有一条DML操作，并且主键只有一个字段；复合主键暂不支持
-
-2.
+ * 2.
 
 
 
