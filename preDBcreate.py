@@ -223,7 +223,7 @@ def main():
             
     #remove history snap dev
     try:
-        if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) == '0\n':
+        if str(os.popen("lvs |grep 'mysqllvsnap' |wc -l").read()) != '1\n':
             logger.info("Not snapshot group, you not remove snapshot group.")
         else:
             logger.info("The history snapshot group already exists.")
