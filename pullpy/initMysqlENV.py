@@ -9,8 +9,7 @@ import os
 import sys
 import re
 import pwd
-import tarfile
-
+from record_logging import RecordLog
 
 MYSQL_DATA_DIR = '/data/mysql/'
 MYSQL_BASE_DIR = '/usr/local/mysql/'
@@ -19,13 +18,16 @@ MYSQL_BACK_DIR = '/data/backup/mysql/'
 port=3306
 SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
 
+global logger
+
+
 def initMysqlEnvVar():
     try:
         with open('/etc/profile','a') as fl:
             fl.write('export PATH=$PATH;/usr/local/mysql/bin'+'\n')
         os.system('source /etc/profile')
     except Exception as e:
-        print(str(e))
+        logger.error(str(e))
         
 
 def mkDATADir():
@@ -33,7 +35,7 @@ def mkDATADir():
         统一标准，将其所有数据文件data3306/data目录下,3306端口是可以变化的
     """
     if os.path.exists('/data/mysql/mysql%s/data' % port):
-        print('mysql%s\/data directory already install' % port)
+        logger.info('mysql%s\/data directory already install' % port)
         sys.exit(1)
     else:
         try:
@@ -41,7 +43,7 @@ def mkDATADir():
             os.makedirs('/data/mysql/mysql%s/tmp' % port)
             os.makedirs('/data/mysql/mysql%s/logs' % port)
         except Exception as e:
-            print("mkDATADir failed. %s" % str(e))
+            logger.error("mkDATADir failed. %s" % str(e))
 
 def unzipMysqlInstallPackage():
     """
@@ -72,19 +74,20 @@ def checkSetMysqlOwnerGroup():
             mysql_gid=list[3]
             
             if not(os.stat(MYSQL_DATA_DIR).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR).st_gid == mysql_gid):
-                print("mysql datadir privilege is wrong.")
+                logger.info("mysql datadir privilege is wrong.")
                 sys.exit(1)
             if not(os.stat(MYSQL_DATA_DIR+'mysql%s/data' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/data' %(port)).st_gid == mysql_gid):
-                print("mysql datadir sub directory data privileges is wrong")
+                logger.info("mysql datadir sub directory data privileges is wrong")
                 sys.exit(1)
             if not(os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_gid == mysql_gid):
-                print("mysql datadir sub directory logs privileges is wrong")
+                logger.info("mysql datadir sub directory logs privileges is wrong")
                 sys.exit(1)
             if not(os.stat(MYSQL_DATA_DIR+'mysql%s/tmp' %(port)).st_uid == mysql_uid and os.stat(MYSQL_DATA_DIR+'mysql%s/logs' %(port)).st_gid == mysql_gid):
-                print("mysql datadir sub directory tmp privileges is wrong")
+                logger.info("mysql datadir sub directory tmp privileges is wrong")
 
 
 if __name__ == '__main__':
+    logger = RecordLog('initMysqlENV').log()
     if(sys.argv[1]=='mkdatadir'):
         mkDATADir()
     elif(sys.argv[1]=='unzipm'):
@@ -94,4 +97,4 @@ if __name__ == '__main__':
     elif(sys.argv[1]=='initenv'):
         initMysqlEnvVar()
     else:
-        print('not_param')
+        logger.info('not_param')
