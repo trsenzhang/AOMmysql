@@ -11,17 +11,19 @@ import os
 from util.record_logging import RecordLog
 from util.transSoft import OptRemote
 import platform
+import configparser 
 
 """
     设置安装目录和数据目录的权限
 """
-MYSQL_DATA_DIR = '/data/mysql/'
+'''
+#MYSQL_DATA_DIR = '/data/mysql/'
 MYSQL_BASE_DIR = '/usr/local/mysql/'
 MYSQL_CNF_DIR = '/etc/'
 MYSQL_BACK_DIR = '/data/backup/mysql/'
 
 INSTALL_MYSQL_SOFT_DIR='/usr/local'
-INSTALL_MYSQL_SOFT_IP='172.18.0.160'
+
 INSTALL_MYSQL_SOFT_PORT='22'
 INSTALL_MYSQL_SOFT_USER='root'
 INSTALL_MYSQL_SOFT_PWD='root'
@@ -33,18 +35,42 @@ INSTALL_MYSQL_SOFT_PWD='root'
 SERVER_SOFT_DIR='/dfile'
 SOFT_NAME='mysql-5.7.24-linux-glibc2.12-x86_64.tar.gz'
 SOFT_NAME_FILE='mysql-5.7.24-linux-glibc2.12-x86_64'
+'''
+
+INSTALL_MYSQL_SOFT_IP='172.18.0.160'
+
+"""
+ path for  program running.
+"""
 CUR_PATH = os.path.dirname(os.path.realpath(__file__))
 
 global logger
-            
 
+def readCfg(flag,name):
+    _filename='%s/targetinfo/info.cfg' % (CUR_PATH)
+    config=configparser.ConfigParser() 
+    with open(_filename,'r') as cfgfile:
+        config.read_file(cfgfile)
+        value=config.get(flag,name) 
+        return(value)
 
 
 def newI():
+    INSTALL_MYSQL_SOFT_PORT=readCfg('port','INSTALL_MYSQL_SOFT_PORT')
+    INSTALL_MYSQL_SOFT_USER=readCfg('user','INSTALL_MYSQL_SOFT_USER')
+    INSTALL_MYSQL_SOFT_PWD=readCfg('user','INSTALL_MYSQL_SOFT_PWD')
     tr=OptRemote(logger,INSTALL_MYSQL_SOFT_IP,int(INSTALL_MYSQL_SOFT_PORT),INSTALL_MYSQL_SOFT_USER,INSTALL_MYSQL_SOFT_PWD)
     return(tr)
 
+
 if __name__ == '__main__':
+    """
+        初始化文件目录，文件名称等
+    """
+    SERVER_SOFT_DIR=readCfg('path','SERVER_SOFT_DIR')
+    SOFT_NAME=readCfg('file','SOFT_NAME')
+    INSTALL_MYSQL_SOFT_DIR=readCfg('path','INSTALL_MYSQL_SOFT_DIR')
+    
     """
         初始化日志格式
     """
@@ -72,19 +98,20 @@ if __name__ == '__main__':
             if(newI().execRmotecmd("python --version")==0):
                 logger.info("the remote server have py env.")
                 #push py files
-                _L_PYFILE='%s/pullpy/initMysqlENV.py' %(CUR_PATH)
-                _R_PYFILE='/tmp/initMysqlENV.py'
-                newI().sendSoft(_L_PYFILE,_R_PYFILE)
+                
+                _dict={'initMysqlENV.py':'pullpy/initMysqlENV.py',
+                       'info.cfg':'targetinfo/info.cfg',
+                       'record_logging.py':'util/record_logging.py'}
+                for key,value in _dict:
+                    _R_PYFILE='/tmp/%s' % key
+                    _L_PYFILE='%s/%s' %(CUR_PATH,value)
+                    newI().sendSoft(_L_PYFILE,_R_PYFILE)
                 
                 #初始化remote server mysql安装环境
-                if(newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir")==0):
-                    logger.info('remote servers data directory create success.')  
-                if(newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm")==0):
-                    logger.info('remote servers mysql soft unzip success.')
-                if(newI().execRmotecmd("python /tmp/initMysqlENV.py addusergroup")==0):
-                    logger.info('remote servers create user and group success.')
-                if(newI().execRmotecmd("python /tmp/initMysqlENV.py initenv")==0):
-                    logger.info('remote servers /etc/profile update success.')
+                newI().execRmotecmd("python /tmp/initMysqlENV.py mkdatadir")
+                newI().execRmotecmd("python /tmp/initMysqlENV.py unzipm")
+                newI().execRmotecmd("python /tmp/initMysqlENV.py addusergroup")
+                newI().execRmotecmd("python /tmp/initMysqlENV.py initenv")
                 
                 
             else:
@@ -96,3 +123,4 @@ if __name__ == '__main__':
             
     else:
             logger.info('The ENV is not linux,waiting coding')
+    
