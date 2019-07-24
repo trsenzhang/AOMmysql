@@ -269,7 +269,6 @@ class singleReplCheck(object):
                 select_sql = line.replace('DELETE','SELECT 1')
             else:
                 select_sql = line.replace('UPDATE','SELECT 1 from')
-                logger.info(select_sql)
             
             cursor.execute(select_sql)
             result = cursor.fetchall() 
@@ -277,9 +276,7 @@ class singleReplCheck(object):
             if not result:
                 insert_sql = delete_or_update_to_insert(line)
                 run_sql = ' Error_code: 1032 -- run SQL:  %s' % insert_sql
-                
-                print('warning %s' % run_sql)
-    
+                logger.info('slave execute sql: %s' % run_sql)  
                 cursor.execute(insert_sql)
                 cursor.execute("start slave sql_thread")
             
